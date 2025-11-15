@@ -1,0 +1,384 @@
+// main application stylesheet
+// imports variables, bootstrap, and applies dark theme with neon blue accents
+// all custom styles override bootstrap defaults for dark theme consistency
+
+// import google fonts
+@import url('https://fonts.bunny.net/css?family=Nunito');
+
+// import scss variables file
+// contains color palette and theme settings
+@import 'variables';
+
+// import bootstrap scss
+// provides base component styles
+@import 'bootstrap/scss/bootstrap';
+
+// custom dark theme styles
+// override bootstrap defaults to create dark neon theme
+
+// html element styling
+html {
+    background-color: $body-bg;
+}
+
+// body element styling
+// sets dark background and light text
+body {
+    background-color: $body-bg !important;
+    color: $text-primary !important;
+    min-height: 100vh;
+}
+
+// heading elements
+// all headings use neon blue color
+h1, h2, h3, h4, h5, h6 {
+    color: $neon-blue;
+    
+    // override text white class to use primary text color
+    &.text-white {
+        color: $text-primary !important;
+    }
+}
+
+// link elements
+// links use neon blue with glow effect on hover
+a {
+    color: $neon-blue;
+    
+    &:hover {
+        color: $neon-blue-light;
+        text-shadow: 0 0 5px $neon-blue-glow;
+    }
+}
+
+// neon blue glow effects
+// utility classes for neon styling
+
+// text glow effect
+.neon-glow {
+    text-shadow: 0 0 10px $neon-blue-glow, 0 0 20px $neon-blue-glow, 0 0 30px $neon-blue-glow;
+}
+
+// border glow effect
+.neon-border {
+    border: 1px solid $neon-blue;
+    box-shadow: 0 0 10px $neon-blue-glow, inset 0 0 10px $neon-blue-glow;
+}
+
+// button with neon styling
+.neon-button {
+    background-color: transparent;
+    border: 2px solid $neon-blue;
+    color: $neon-blue;
+    transition: all 0.3s ease;
+    
+    &:hover {
+        background-color: $neon-blue;
+        color: $bg-dark;
+        box-shadow: 0 0 20px $neon-blue-glow, 0 0 40px $neon-blue-glow;
+    }
+}
+
+// card component styling
+// override bootstrap card styles for dark theme
+.card {
+    background-color: $bg-card !important;
+    border: 1px solid rgba(0, 217, 255, 0.2) !important;
+    color: $text-primary !important;
+    
+    .card-header {
+        background-color: $bg-darker !important;
+        border-bottom: 1px solid rgba(0, 217, 255, 0.2) !important;
+        color: $text-primary !important;
+        
+        // primary header variant
+        &.bg-primary {
+            background-color: $neon-blue !important;
+            color: $bg-dark !important;
+        }
+    }
+    
+    .card-body {
+        color: $text-primary !important;
+        background-color: $bg-card !important;
+    }
+    
+    .card-footer {
+        background-color: $bg-darker !important;
+        border-top: 1px solid rgba(0, 217, 255, 0.2) !important;
+    }
+    
+    .card-title, .card-text {
+        color: $text-primary !important;
+    }
+}
+
+// navbar component styling
+// dark navbar with neon blue brand
+.navbar {
+    background-color: $bg-darker !important;
+    border-bottom: 1px solid rgba(0, 217, 255, 0.2);
+    
+    .navbar-brand {
+        color: $neon-blue !important;
+        text-shadow: 0 0 10px $neon-blue-glow;
+        font-weight: bold;
+    }
+    
+    .nav-link {
+        color: $text-primary !important;
+        
+        &:hover {
+            color: $neon-blue !important;
+            text-shadow: 0 0 5px $neon-blue-glow;
+        }
+    }
+}
+
+// badge component styling
+// override bootstrap badge colors for dark theme
+.badge {
+    &.bg-primary {
+        background-color: $neon-blue !important;
+        color: $bg-dark !important;
+    }
+    
+    &.bg-secondary {
+        background-color: $secondary !important;
+        color: $text-primary !important;
+    }
+    
+    &.bg-warning {
+        background-color: #FFA500 !important;
+        color: $bg-dark !important;
+    }
+    
+    &.bg-info {
+        background-color: $neon-blue !important;
+        color: $bg-dark !important;
+    }
+}
+
+// button component styling
+// primary buttons use neon blue
+.btn-primary {
+    background-color: $neon-blue;
+    border-color: $neon-blue;
+    color: $bg-dark;
+    
+    &:hover {
+        background-color: $neon-blue-light;
+        border-color: $neon-blue-light;
+        box-shadow: 0 0 15px $neon-blue-glow;
+    }
+}
+
+// outline primary button
+.btn-outline-primary {
+    border-color: $neon-blue;
+    color: $neon-blue;
+    
+    &:hover {
+        background-color: $neon-blue;
+        border-color: $neon-blue;
+        color: $bg-dark;
+        box-shadow: 0 0 15px $neon-blue-glow;
+    }
+}
+
+// text muted styling
+.text-muted {
+    color: $text-muted !important;
+}
+
+// background utility classes
+// override bootstrap background colors for dark theme
+.bg-white {
+    background-color: $bg-card !important;
+}
+
+.bg-light {
+    background-color: $bg-darker !important;
+}
+
+.bg-dark {
+    background-color: $bg-dark !important;
+}
+
+.bg-secondary {
+    background-color: $secondary !important;
+}
+
+// border utilities
+.border-bottom {
+    border-bottom-color: rgba(0, 217, 255, 0.2) !important;
+}
+
+// form label styling
+.form-label {
+    color: $text-primary !important;
+}
+
+// form check label styling
+.form-check-label {
+    color: $text-primary !important;
+}
+
+// invalid feedback styling
+.invalid-feedback {
+    color: #ff6666 !important;
+}
+
+// links in cards
+.card a {
+    color: $neon-blue !important;
+    
+    &:hover {
+        color: $neon-blue-light !important;
+    }
+}
+
+// shadow utilities
+.shadow, .shadow-sm {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 217, 255, 0.2) !important;
+}
+
+// text color utilities
+.text-white {
+    color: $text-primary !important;
+}
+
+// container utilities
+.container, .container-fluid {
+    background-color: transparent !important;
+}
+
+// row utility
+.row {
+    background-color: transparent !important;
+}
+
+// column utilities
+[class*="col-"] {
+    background-color: transparent !important;
+}
+
+// alert component styling
+// override bootstrap alert styles for dark theme
+.alert {
+    background-color: $bg-card !important;
+    border: 1px solid rgba(0, 217, 255, 0.3) !important;
+    color: $text-primary !important;
+    
+    // info alert variant
+    &.alert-info {
+        border-color: $neon-blue !important;
+        background-color: rgba(0, 217, 255, 0.1) !important;
+    }
+    
+    // success alert variant
+    &.alert-success {
+        border-color: #00ff00 !important;
+        background-color: rgba(0, 255, 0, 0.1) !important;
+        color: #00ff00 !important;
+    }
+    
+    // danger alert variant
+    &.alert-danger {
+        border-color: #ff0000 !important;
+        background-color: rgba(255, 0, 0, 0.1) !important;
+        color: #ff6666 !important;
+    }
+}
+
+// dropdown menu styling
+// dark dropdown with neon accents
+.dropdown-menu {
+    background-color: $bg-card;
+    border: 1px solid rgba(0, 217, 255, 0.2);
+    
+    .dropdown-item {
+        color: $text-primary;
+        
+        &:hover {
+            background-color: rgba(0, 217, 255, 0.2);
+            color: $neon-blue;
+        }
+    }
+}
+
+// form control styling
+// dark form inputs with neon blue focus
+.form-control, .form-select {
+    background-color: $bg-darker !important;
+    border: 1px solid rgba(0, 217, 255, 0.3) !important;
+    color: $text-primary !important;
+    
+    &:focus {
+        background-color: $bg-darker !important;
+        border-color: $neon-blue !important;
+        color: $text-primary !important;
+        box-shadow: 0 0 0 0.2rem rgba(0, 217, 255, 0.25) !important;
+    }
+    
+    &::placeholder {
+        color: $text-muted !important;
+    }
+    
+    option {
+        background-color: $bg-card;
+        color: $text-primary;
+    }
+}
+
+// select dropdown styling
+select.form-select, select.form-control {
+    background-color: $bg-darker !important;
+    color: $text-primary !important;
+    
+    option {
+        background-color: $bg-card !important;
+        color: $text-primary !important;
+    }
+}
+
+// textarea styling
+textarea.form-control {
+    background-color: $bg-darker !important;
+    color: $text-primary !important;
+}
+
+// jumbotron/hero section styling
+.jumbotron {
+    background-color: $bg-card !important;
+    border: 1px solid rgba(0, 217, 255, 0.2);
+    color: $text-primary !important;
+}
+
+// pagination component styling
+// dark pagination with neon blue active state
+.pagination {
+    .page-link {
+        background-color: $bg-card;
+        border-color: rgba(0, 217, 255, 0.3);
+        color: $neon-blue;
+        
+        &:hover {
+            background-color: rgba(0, 217, 255, 0.2);
+            border-color: $neon-blue;
+            color: $neon-blue-light;
+        }
+    }
+    
+    .page-item.active .page-link {
+        background-color: $neon-blue;
+        border-color: $neon-blue;
+        color: $bg-dark;
+    }
+    
+    .page-item.disabled .page-link {
+        background-color: $bg-darker;
+        border-color: rgba(0, 217, 255, 0.2);
+        color: $text-muted;
+    }
+}

@@ -1,0 +1,40 @@
+// scss variables file
+// defines color palette, typography, and theme settings for the application
+// all variables use lowercase with hyphens following scss conventions
+
+// body dark theme colors
+// main background and text colors for dark theme
+$body-bg: #000000;
+$body-color: #ffffff;
+
+// neon blue theme colors
+// primary accent color with variations for hover states and effects
+$neon-blue: #00D9FF;
+$neon-blue-dark: #0099CC;
+$neon-blue-light: #33E5FF;
+$neon-blue-glow: rgba(0, 217, 255, 0.5);
+
+// bootstrap theme colors
+// override bootstrap default colors to match dark neon theme
+$primary: $neon-blue;
+$secondary: #1a1a1a;
+$dark: #000000;
+$light: #1a1a1a;
+
+// background colors
+// different shades of dark for layering and depth
+$bg-dark: #000000;
+$bg-darker: #0a0a0a;
+$bg-card: #111111;
+
+// text colors
+// text color variations for hierarchy and readability
+$text-primary: #ffffff;
+$text-secondary: #b0b0b0;
+$text-muted: #666666;
+
+// typography settings
+// font family and base sizing for consistent text rendering
+$font-family-sans-serif: 'Nunito', sans-serif;
+$font-size-base: 0.9rem;
+$line-height-base: 1.6;

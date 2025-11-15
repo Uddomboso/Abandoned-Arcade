@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chrome Dino Game</title>
+    <link rel="shortcut icon" type="image/png" href="./assets/favicon.png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #f7f7f7;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Press Start 2P', 'Courier New', monospace;
+            overflow: hidden;
+        }
+        
+        @font-face {
+            font-family: 'Press Start 2P';
+            src: url('./assets/PressStart2P-Regular.ttf') format('truetype');
+        }
+        
+        #gameContainer {
+            position: relative;
+            background: #f7f7f7;
+        }
+    </style>
+</head>
+<body>
+    <div id="gameContainer"></div>
+    <script type="module" src="./lib/index.js"></script>
+    
+    <!-- Guest mode tracking -->
+    <script>
+        if (window.GuestService) {
+            window.GuestService.addToPlayHistory(0, 'Chrome Dino Game');
+        }
+    </script>
+</body>
+</html>

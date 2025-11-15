@@ -1,0 +1,63 @@
+HOW TO FIND DATABASE CONNECTION IN SUPABASE
+===========================================
+
+You're currently looking at API KEYS section. Database connection is DIFFERENT!
+
+STEP-BY-STEP:
+
+1. In Supabase Dashboard, look at the LEFT SIDEBAR
+
+2. Find "Settings" (gear icon) - click it
+
+3. Under "Project Settings", you'll see:
+   - API (where you are now - shows API keys)
+   - Database ← CLICK THIS ONE!
+   - Auth
+   - Storage
+   - etc.
+
+4. Click "Database"
+
+5. Scroll down to find "Connection string" section
+
+6. You'll see tabs:
+   - URI
+   - JDBC
+   - Connection parameters
+   - etc.
+
+7. Click "URI" tab
+
+8. You'll see the connection string like:
+   postgresql://postgres:[PASSWORD]@db.qmonmawebxzlbithvkli.supabase.co:5432/postgres
+
+9. OR click "Connection parameters" tab to see:
+   - Host
+   - Port
+   - Database name
+   - User
+   - Password
+
+WHAT YOU NEED:
+--------------
+- Host: (from Connection parameters or extract from URI)
+- Port: Usually 5432
+- Database: postgres
+- User: postgres
+- Password: (from Connection parameters or extract from URI)
+
+IF YOU CAN'T FIND IT:
+--------------------
+1. Make sure you're in Settings → Database (NOT Settings → API)
+2. Scroll down - Connection string section is usually at the bottom
+3. If still can't find, try: Settings → Database → Connection pooling
+
+ALTERNATIVE: USE CONNECTION POOLING
+-----------------------------------
+If direct connection doesn't work:
+1. Settings → Database → Connection pooling
+2. Copy connection string from there
+3. Use port 6543 instead of 5432
+
+
+
