@@ -17,7 +17,7 @@ A web-based retro game arcade platform built with Laravel. Discover, play, and p
 
 - Backend: Laravel (PHP)
 - Frontend: Bootstrap 5, Sass, JavaScript
-- Database: SQLite/PostgreSQL
+- Database: Neon (PostgreSQL) - serverless PostgreSQL database
 - Asset Bundling: Vite
 - Authentication: Laravel Sanctum, WorkOS (optional)
 
@@ -29,7 +29,10 @@ A web-based retro game arcade platform built with Laravel. Discover, play, and p
    composer install
    npm install
    ```
-3. Copy `.env.example` to `.env` and configure
+3. Copy `.env.example` to `.env` and configure:
+   - Set `DB_CONNECTION=pgsql` for Neon database
+   - Configure Neon connection: `DB_HOST`, `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD` from your Neon project
+   - Set `DB_SSLMODE=require` for secure connection
 4. Generate application key:
    ```bash
    php artisan key:generate
