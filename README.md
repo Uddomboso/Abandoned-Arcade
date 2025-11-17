@@ -1,12 +1,12 @@
 # Abandoned Arcade
 
-A web-based retro game arcade platform built with Laravel. Discover, play, and preserve classic games from various eras. Features a dark theme with neon blue accents, guest mode support, and comprehensive game management.
+A retro game arcade platform built with Laravel.
 
 ## About
 
-![Logo](logogif.gif)
+![Logo](assets/fulllogo.png)
 
-Abandoned Arcade is a platform dedicated to preserving and sharing classic retro games. Built with modern web technologies while maintaining the nostalgic feel of arcade gaming.
+Abandoned Arcade is a platform for preserving and sharing classic retro games. 
 
 ## Features
 

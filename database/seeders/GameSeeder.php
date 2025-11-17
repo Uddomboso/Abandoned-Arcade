@@ -175,6 +175,48 @@ class GameSeeder extends Seeder
                 'is_active' => true,
             ]
         );
+        
+        // Bubble Shooter
+        Game::updateOrCreate(
+            ['slug' => 'bubble-shooter'],
+            [
+                'title' => 'Bubble Shooter',
+                'description' => 'Classic Bubble Shooter arcade game - aim and shoot colored bubbles to match and pop them! Clear the board to advance.',
+                'developer' => 'rembound',
+                'publisher' => 'Abandoned Arcade',
+                'release_date' => now()->setYear(1994),
+                'genre_id' => $arcadeGenre->id,
+                'game_file_path' => 'bubbleshooter/bubble-shooter.html',
+                'image_url' => null, // Will use preview.png detection
+                'source_type' => 'html5',
+                'rating' => 0,
+                'rating_count' => 0,
+                'play_count' => 0,
+                'is_featured' => false,
+                'is_active' => true,
+            ]
+        );
+        
+        // Match 3
+        Game::updateOrCreate(
+            ['slug' => 'match3'],
+            [
+                'title' => 'Match 3',
+                'description' => 'Classic Match 3 puzzle game - swap and match colorful gems to clear the board! Create combos and reach high scores.',
+                'developer' => 'rembound',
+                'publisher' => 'Abandoned Arcade',
+                'release_date' => now()->setYear(2001),
+                'genre_id' => $puzzleGenre->id,
+                'game_file_path' => 'match3/match3.html',
+                'image_url' => null, // Will use preview.png detection
+                'source_type' => 'html5',
+                'rating' => 0,
+                'rating_count' => 0,
+                'play_count' => 0,
+                'is_featured' => false,
+                'is_active' => true,
+            ]
+        );
     }
 }
 
