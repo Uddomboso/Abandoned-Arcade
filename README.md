@@ -4,7 +4,7 @@ A retro game arcade platform built with Laravel.
 
 ## About
 
-![Logo](assets/fulllogo.png)
+![Logo](assets/logogif.gif)
 
 Abandoned Arcade is a platform for preserving and sharing classic retro games. 
 
