@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Puzzle Game Test</title>
+</head>
+<body>
+    <h1>Puzzle Game Diagnostic Test</h1>
+    <div id="status">Testing...</div>
+    <script type="module">
+        const status = document.getElementById('status');
+        
+        async function test() {
+            try {
+                // Test 1: Check if modules can be imported
+                status.innerHTML += '<br>✓ Testing module imports...';
+                const { default: Data } = await import('./source/Data.js');
+                status.innerHTML += '<br>✓ Data module loaded';
+                
+                const { default: KeyCode } = await import('./utils/KeyCode.js');
+                status.innerHTML += '<br>✓ KeyCode module loaded';
+                
+                const { default: Utils } = await import('./utils/Utils.js');
+                status.innerHTML += '<br>✓ Utils module loaded';
+                
+                const { default: Storage } = await import('./utils/Storage.js');
+                status.innerHTML += '<br>✓ Storage module loaded';
+                
+                const { default: Sounds } = await import('./utils/Sounds.js');
+                status.innerHTML += '<br>✓ Sounds module loaded';
+                
+                const { default: List } = await import('./utils/List.js');
+                status.innerHTML += '<br>✓ List module loaded';
+                
+                const { default: Selection } = await import('./source/Selection.js');
+                status.innerHTML += '<br>✓ Selection module loaded';
+                
+                // Test 2: Check DOM elements
+                status.innerHTML += '<br><br>✓ Testing DOM elements...';
+                const selection = document.querySelector('.selection');
+                if (selection) {
+                    status.innerHTML += '<br>✓ Selection element found';
+                } else {
+                    status.innerHTML += '<br>✗ Selection element NOT found';
+                }
+                
+                // Test 3: Try to initialize
+                status.innerHTML += '<br><br>✓ Testing initialization...';
+                const testSelection = new Selection(() => {});
+                status.innerHTML += '<br>✓ Selection initialized successfully';
+                
+                status.innerHTML += '<br><br><strong style="color: green;">All tests passed! The game should work.</strong>';
+            } catch (error) {
+                status.innerHTML += '<br><br><strong style="color: red;">Error: ' + error.message + '</strong>';
+                status.innerHTML += '<br>Stack: ' + error.stack;
+                console.error('Test error:', error);
+            }
+        }
+        
+        test();
+    </script>
+</body>
+</html>
+

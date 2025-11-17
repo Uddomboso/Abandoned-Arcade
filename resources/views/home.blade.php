@@ -26,56 +26,6 @@
     </section>
     @endif
 
-    <!-- Featured Games -->
-    @if($featuredGames->count() > 0)
-    <section class="mb-5">
-        <h2 class="section-heading">featured games</h2>
-        <div class="row g-4">
-            @foreach($featuredGames as $game)
-            <div class="col-md-4">
-                <div class="card game-card h-100">
-                    @php
-                        $previewPath = null;
-                        if ($game->game_file_path) {
-                            $gameDir = dirname($game->game_file_path);
-                            if ($gameDir === '.' || $gameDir === '') {
-                                $gameDir = pathinfo($game->game_file_path, PATHINFO_FILENAME);
-                            }
-                            $previewFile = public_path('games/' . $gameDir . '/preview.png');
-                            if (file_exists($previewFile)) {
-                                $previewPath = asset('games/' . $gameDir . '/preview.png');
-                            }
-                        }
-                    @endphp
-                    @if($game->image_url)
-                    <img src="{{ $game->image_url }}" class="card-img-top" alt="{{ $game->title }}" style="height: 200px; object-fit: cover;">
-                    @elseif($previewPath)
-                    <img src="{{ $previewPath }}" class="card-img-top" alt="{{ $game->title }}" style="height: 200px; object-fit: cover;">
-                    @else
-                    <div class="card-img-top d-flex align-items-center justify-content-center" style="height: 200px; background-color: #000000; border: 1px solid rgba(0, 234, 255, 0.2);">
-                        <span class="text-muted">No Image</span>
-                    </div>
-                    @endif
-                    <div class="card-body">
-                        <h5 class="card-title">{{ $game->title }}</h5>
-                        <p class="card-text text-muted">{{ Str::limit($game->description, 100) }}</p>
-                        <div class="mb-2">
-                            <span class="badge bg-primary">{{ $game->genre->name }}</span>
-                            @if($game->rating > 0)
-                            <span class="badge bg-warning text-dark">{{ number_format($game->rating, 1) }}</span>
-                            @endif
-                        </div>
-                    </div>
-                    <div class="card-footer bg-transparent">
-                        <a href="{{ route('games.show', $game->id) }}" class="btn btn-sm btn-primary">View Game</a>
-                    </div>
-                </div>
-            </div>
-            @endforeach
-        </div>
-    </section>
-    @endif
-
     <!-- Latest Games -->
     @if($latestGames->count() > 0)
     <section class="mb-5">
@@ -91,9 +41,19 @@
                             if ($gameDir === '.' || $gameDir === '') {
                                 $gameDir = pathinfo($game->game_file_path, PATHINFO_FILENAME);
                             }
+                            // Check in game directory first
                             $previewFile = public_path('games/' . $gameDir . '/preview.png');
                             if (file_exists($previewFile)) {
                                 $previewPath = asset('games/' . $gameDir . '/preview.png');
+                            } else {
+                                // Check in parent directory (for games like puzzlem/puzzle/index.html)
+                                $parentDir = dirname($gameDir);
+                                if ($parentDir !== '.' && $parentDir !== '') {
+                                    $parentPreviewFile = public_path('games/' . $parentDir . '/preview.png');
+                                    if (file_exists($parentPreviewFile)) {
+                                        $previewPath = asset('games/' . $parentDir . '/preview.png');
+                                    }
+                                }
                             }
                         }
                     @endphp

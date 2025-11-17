@@ -8,8 +8,33 @@
             <div class="card mb-4">
                 <div class="row g-0">
                     <div class="col-md-4">
+                        @php
+                            $previewPath = null;
+                            if ($game->game_file_path) {
+                                $gameDir = dirname($game->game_file_path);
+                                if ($gameDir === '.' || $gameDir === '') {
+                                    $gameDir = pathinfo($game->game_file_path, PATHINFO_FILENAME);
+                                }
+                                // Check in game directory first
+                                $previewFile = public_path('games/' . $gameDir . '/preview.png');
+                                if (file_exists($previewFile)) {
+                                    $previewPath = asset('games/' . $gameDir . '/preview.png');
+                                } else {
+                                    // Check in parent directory (for games like puzzlem/puzzle/index.html)
+                                    $parentDir = dirname($gameDir);
+                                    if ($parentDir !== '.' && $parentDir !== '') {
+                                        $parentPreviewFile = public_path('games/' . $parentDir . '/preview.png');
+                                        if (file_exists($parentPreviewFile)) {
+                                            $previewPath = asset('games/' . $parentDir . '/preview.png');
+                                        }
+                                    }
+                                }
+                            }
+                        @endphp
                         @if($game->image_url)
                         <img src="{{ $game->image_url }}" class="img-fluid rounded-start" alt="{{ $game->title }}" style="height: 100%; object-fit: cover;">
+                        @elseif($previewPath)
+                        <img src="{{ $previewPath }}" class="img-fluid rounded-start" alt="{{ $game->title }}" style="height: 100%; object-fit: cover;">
                         @else
                         <div class="bg-secondary d-flex align-items-center justify-content-center" style="height: 100%; min-height: 300px;">
                             <span class="text-white">No Image</span>
@@ -162,8 +187,31 @@
                 <div class="card-body">
                     @foreach($relatedGames as $relatedGame)
                     <div class="d-flex mb-3">
+                        @php
+                            $relatedPreviewPath = null;
+                            if ($relatedGame->game_file_path) {
+                                $relatedGameDir = dirname($relatedGame->game_file_path);
+                                if ($relatedGameDir === '.' || $relatedGameDir === '') {
+                                    $relatedGameDir = pathinfo($relatedGame->game_file_path, PATHINFO_FILENAME);
+                                }
+                                $relatedPreviewFile = public_path('games/' . $relatedGameDir . '/preview.png');
+                                if (file_exists($relatedPreviewFile)) {
+                                    $relatedPreviewPath = asset('games/' . $relatedGameDir . '/preview.png');
+                                } else {
+                                    $relatedParentDir = dirname($relatedGameDir);
+                                    if ($relatedParentDir !== '.' && $relatedParentDir !== '') {
+                                        $relatedParentPreviewFile = public_path('games/' . $relatedParentDir . '/preview.png');
+                                        if (file_exists($relatedParentPreviewFile)) {
+                                            $relatedPreviewPath = asset('games/' . $relatedParentDir . '/preview.png');
+                                        }
+                                    }
+                                }
+                            }
+                        @endphp
                         @if($relatedGame->image_url)
                         <img src="{{ $relatedGame->image_url }}" class="me-3" style="width: 80px; height: 80px; object-fit: cover;" alt="{{ $relatedGame->title }}">
+                        @elseif($relatedPreviewPath)
+                        <img src="{{ $relatedPreviewPath }}" class="me-3" style="width: 80px; height: 80px; object-fit: cover;" alt="{{ $relatedGame->title }}">
                         @else
                         <div class="bg-secondary me-3" style="width: 80px; height: 80px;"></div>
                         @endif

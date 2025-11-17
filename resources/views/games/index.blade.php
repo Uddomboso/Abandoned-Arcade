@@ -40,9 +40,19 @@
                         if ($gameDir === '.' || $gameDir === '') {
                             $gameDir = pathinfo($game->game_file_path, PATHINFO_FILENAME);
                         }
+                        // Check in game directory first
                         $previewFile = public_path('games/' . $gameDir . '/preview.png');
                         if (file_exists($previewFile)) {
                             $previewPath = asset('games/' . $gameDir . '/preview.png');
+                        } else {
+                            // Check in parent directory (for games like puzzlem/puzzle/index.html)
+                            $parentDir = dirname($gameDir);
+                            if ($parentDir !== '.' && $parentDir !== '') {
+                                $parentPreviewFile = public_path('games/' . $parentDir . '/preview.png');
+                                if (file_exists($parentPreviewFile)) {
+                                    $previewPath = asset('games/' . $parentDir . '/preview.png');
+                                }
+                            }
                         }
                     }
                 @endphp

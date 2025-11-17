@@ -13,9 +13,9 @@
                     <h4 class="mb-0">{{ $game->title }}</h4>
                     <a href="{{ route('games.show', $game->id) }}" class="btn btn-sm btn-outline-secondary">← Back to Game</a>
                 </div>
-                <div class="card-body p-0">
+                <div class="card-body p-0" style="position: relative;">
                     {{-- game container with black background --}}
-                    <div id="game-container" style="width: 100%; min-height: 600px; background: #000; display: flex; align-items: center; justify-content: center;">
+                    <div id="game-container" style="width: 100%; min-height: 800px; background: #000; position: relative; overflow: hidden;">
                         {{-- flash game with ruffle player --}}
                         {{-- uses ruffle to play swf flash files in modern browsers --}}
                         @if($game->source_type === 'ruffle' || ($game->game_file_path && str_ends_with($game->game_file_path, '.swf')))
@@ -44,19 +44,71 @@
                                     id="game-iframe"
                                     src="{{ asset('games/' . $game->game_file_path) }}" 
                                     width="100%" 
-                                    height="600" 
+                                    height="800" 
                                     frameborder="0"
                                     allowfullscreen
-                                    style="border: none;"
-                                    tabindex="0">
+                                    allow="pointer-events; autoplay; fullscreen"
+                                    style="border: none; display: block; margin: 0; padding: 0; width: 100%; height: 800px;"
+                                    tabindex="0"
+                                    scrolling="no">
                                 </iframe>
                                 <script>
-                                    {{-- iframe keyboard event handling --}}
-                                    {{-- ensures iframe can receive keyboard input for game controls --}}
+                                    {{-- iframe keyboard and mouse event handling --}}
+                                    {{-- ensures iframe can receive keyboard input and mouse events for game controls --}}
                                     const gameIframe = document.getElementById('game-iframe');
                                     
                                     {{-- forward keyboard events to iframe when loaded --}}
                                     gameIframe.addEventListener('load', function() {
+                                        console.log('Game iframe loaded');
+                                        
+                                        {{-- Wait a bit for game to initialize --}}
+                                        setTimeout(function() {
+                                            {{-- ensure iframe content is ready and can receive events --}}
+                                            try {
+                                                const iframeDoc = gameIframe.contentDocument || gameIframe.contentWindow.document;
+                                                const iframeWindow = gameIframe.contentWindow;
+                                                const iframeBody = iframeDoc ? iframeDoc.body : null;
+                                                
+                                                if (iframeBody) {
+                                                    iframeBody.style.userSelect = 'none';
+                                                    iframeBody.style.touchAction = 'none';
+                                                    console.log('Iframe body styles applied');
+                                                    
+                                                    {{-- Check if game script loaded --}}
+                                                    const scripts = iframeDoc.querySelectorAll('script');
+                                                    console.log('Scripts in iframe:', scripts.length);
+                                                    
+                                                    {{-- Check for puzzle elements after game starts --}}
+                                                    setTimeout(function() {
+                                                        const puzzleElements = iframeDoc.querySelectorAll('[class*="piece"], [data-id], .piece, [class*="Piece"]');
+                                                        console.log('Found puzzle elements:', puzzleElements.length);
+                                                        
+                                                        {{-- Check if game initialized by looking for game container --}}
+                                                        const gameContainer = iframeDoc.querySelector('.container, .board, .drawer');
+                                                        console.log('Game container found:', !!gameContainer);
+                                                        
+                                                        {{-- Test mouse events --}}
+                                                        iframeBody.addEventListener('mousedown', function(e) {
+                                                            console.log('Mouse down in iframe:', e.target, e.clientX, e.clientY);
+                                                        }, true);
+                                                        
+                                                        {{-- Intercept console errors from game --}}
+                                                        if (iframeWindow.console && iframeWindow.console.error) {
+                                                            const originalError = iframeWindow.console.error;
+                                                            iframeWindow.console.error = function(...args) {
+                                                                console.error('[Game]', ...args);
+                                                                originalError.apply(iframeWindow.console, args);
+                                                            };
+                                                        }
+                                                    }, 2000);
+                                                }
+                                                
+                                                console.log('Iframe document accessed successfully');
+                                            } catch (e) {
+                                                console.error('Cannot access iframe document:', e);
+                                            }
+                                        }, 500);
+                                        
                                         {{-- forward keydown events to iframe --}}
                                         window.addEventListener('keydown', function(e) {
                                             {{-- only forward if iframe is visible and focused --}}
@@ -100,12 +152,34 @@
                                                 }
                                             }
                                         });
+                                        
+                                        console.log('Game iframe loaded and ready');
                                     });
                                     
+                                    {{-- focus iframe immediately to ensure it can receive events --}}
+                                    setTimeout(function() {
+                                        gameIframe.focus();
+                                        console.log('Iframe focused');
+                                    }, 100);
+                                    
                                     {{-- focus iframe when clicked to enable keyboard input --}}
+                                    {{-- don't stop propagation - let events reach iframe naturally --}}
                                     gameIframe.addEventListener('click', function() {
                                         gameIframe.focus();
                                     });
+                                    
+                                    {{-- test if mouse events are reaching the iframe --}}
+                                    gameIframe.addEventListener('mouseenter', function() {
+                                        console.log('Mouse entered iframe');
+                                    });
+                                    
+                                    gameIframe.addEventListener('mousedown', function() {
+                                        console.log('Mouse down on iframe');
+                                        gameIframe.focus();
+                                    });
+                                    
+                                    {{-- log for debugging --}}
+                                    console.log('Game iframe initialized, ready for mouse events');
                                 </script>
                             @elseif($game->game_url)
                                 {{-- external game url in iframe --}}
