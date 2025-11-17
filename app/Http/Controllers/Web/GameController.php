@@ -25,9 +25,13 @@ class GameController extends Controller
             });
         }
 
-        // search by title if search parameter provided
-        if ($request->has('search')) {
-            $query->where('title', 'like', '%' . $request->search . '%');
+        // search by title or description if search parameter provided
+        if ($request->has('search') && !empty($request->search)) {
+            $searchTerm = $request->search;
+            $query->where(function($q) use ($searchTerm) {
+                $q->where('title', 'like', '%' . $searchTerm . '%')
+                  ->orWhere('description', 'like', '%' . $searchTerm . '%');
+            });
         }
 
         // sort games by specified field and order

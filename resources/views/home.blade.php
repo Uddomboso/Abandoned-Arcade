@@ -2,26 +2,58 @@
 
 @section('content')
 <div class="container">
-    <!-- Hero Section -->
-    <div class="jumbotron bg-dark text-white rounded p-5 mb-5 mt-4 neon-border">
-        <h1 class="display-4 neon-glow">Welcome to Abandoned Arcade</h1>
-        <p class="lead">Discover and play amazing retro games. Build your collection, share reviews, and relive the classics!</p>
-        <a class="btn btn-primary btn-lg" href="{{ route('games.index') }}" role="button">Browse Games</a>
-    </div>
+
+
+    <!-- Genres -->
+    @if($genres->count() > 0)
+    <section class="mb-5">
+        <h2 class="section-heading">browse by genre</h2>
+        <div class="row g-3">
+            @foreach($genres as $genre)
+            <div class="col-md-3 col-sm-6 mb-3">
+                <a href="{{ route('games.index', ['genre' => $genre->slug]) }}" class="text-decoration-none">
+                    <div class="genre-card-neon">
+                        <div class="genre-icon-circle">
+                            <span class="genre-icon">🎮</span>
+                        </div>
+                        <h5 class="genre-title">{{ $genre->name }}</h5>
+                        <p class="genre-count">{{ $genre->games_count ?? 0 }} games</p>
+                    </div>
+                </a>
+            </div>
+            @endforeach
+        </div>
+    </section>
+    @endif
 
     <!-- Featured Games -->
     @if($featuredGames->count() > 0)
     <section class="mb-5">
-        <h2 class="mb-4" style="color: #00D9FF;">Featured Games</h2>
-        <div class="row">
+        <h2 class="section-heading">featured games</h2>
+        <div class="row g-4">
             @foreach($featuredGames as $game)
-            <div class="col-md-4 mb-4">
-                <div class="card h-100 shadow-sm">
+            <div class="col-md-4">
+                <div class="card game-card h-100">
+                    @php
+                        $previewPath = null;
+                        if ($game->game_file_path) {
+                            $gameDir = dirname($game->game_file_path);
+                            if ($gameDir === '.' || $gameDir === '') {
+                                $gameDir = pathinfo($game->game_file_path, PATHINFO_FILENAME);
+                            }
+                            $previewFile = public_path('games/' . $gameDir . '/preview.png');
+                            if (file_exists($previewFile)) {
+                                $previewPath = asset('games/' . $gameDir . '/preview.png');
+                            }
+                        }
+                    @endphp
                     @if($game->image_url)
                     <img src="{{ $game->image_url }}" class="card-img-top" alt="{{ $game->title }}" style="height: 200px; object-fit: cover;">
+                    @elseif($previewPath)
+                    <img src="{{ $previewPath }}" class="card-img-top" alt="{{ $game->title }}" style="height: 200px; object-fit: cover;">
                     @else
-                    <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center" style="height: 200px;">
-                        <span class="text-white">No Image</span>
+                    <div class="card-img-top d-flex align-items-center justify-content-center" style="height: 200px; background-color: #000000; border: 1px solid rgba(0, 234, 255, 0.2);">
+                        <span class="text-muted">No Image</span>
                     </div>
                     @endif
                     <div class="card-body">
@@ -47,16 +79,31 @@
     <!-- Latest Games -->
     @if($latestGames->count() > 0)
     <section class="mb-5">
-        <h2 class="mb-4" style="color: #00D9FF;">Latest Games</h2>
-        <div class="row">
+        <h2 class="section-heading">latest games</h2>
+        <div class="row g-4">
             @foreach($latestGames as $game)
-            <div class="col-md-3 mb-4">
-                <div class="card h-100 shadow-sm">
+            <div class="col-md-3 col-sm-6">
+                <div class="card game-card h-100">
+                    @php
+                        $previewPath = null;
+                        if ($game->game_file_path) {
+                            $gameDir = dirname($game->game_file_path);
+                            if ($gameDir === '.' || $gameDir === '') {
+                                $gameDir = pathinfo($game->game_file_path, PATHINFO_FILENAME);
+                            }
+                            $previewFile = public_path('games/' . $gameDir . '/preview.png');
+                            if (file_exists($previewFile)) {
+                                $previewPath = asset('games/' . $gameDir . '/preview.png');
+                            }
+                        }
+                    @endphp
                     @if($game->image_url)
                     <img src="{{ $game->image_url }}" class="card-img-top" alt="{{ $game->title }}" style="height: 150px; object-fit: cover;">
+                    @elseif($previewPath)
+                    <img src="{{ $previewPath }}" class="card-img-top" alt="{{ $game->title }}" style="height: 150px; object-fit: cover;">
                     @else
-                    <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center" style="height: 150px;">
-                        <span class="text-white small">No Image</span>
+                    <div class="card-img-top d-flex align-items-center justify-content-center" style="height: 150px; background-color: #000000; border: 1px solid rgba(0, 234, 255, 0.2);">
+                        <span class="text-muted small">No Image</span>
                     </div>
                     @endif
                     <div class="card-body">
@@ -81,25 +128,5 @@
     </div>
     @endif
 
-    <!-- Genres -->
-    @if($genres->count() > 0)
-    <section class="mb-5">
-        <h2 class="mb-4" style="color: #00D9FF;">Browse by Genre</h2>
-        <div class="row">
-            @foreach($genres as $genre)
-            <div class="col-md-3 mb-3">
-                <a href="{{ route('games.index', ['genre' => $genre->slug]) }}" class="text-decoration-none">
-                    <div class="card text-center">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ $genre->name }}</h5>
-                            <p class="card-text text-muted small">{{ $genre->games_count ?? 0 }} games</p>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            @endforeach
-        </div>
-    </section>
-    @endif
 </div>
 @endsection

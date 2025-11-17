@@ -177,7 +177,7 @@
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card">
+            <div class="card mb-3">
                 <div class="card-header">
                     <h5>Quick Actions</h5>
                 </div>
@@ -193,6 +193,9 @@
                     @endauth
                 </div>
             </div>
+            
+            {{-- leaderboard section --}}
+            <div id="leaderboard-{{ $game->id }}"></div>
         </div>
     </div>
 </div>
@@ -228,4 +231,18 @@ function saveGameState() {
 }
 </script>
 @endauth
+
+{{-- leaderboard initialization --}}
+@guest
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    if (window.LeaderboardService) {
+        // Display guest leaderboard
+        window.LeaderboardService.displayGuestLeaderboard({{ $game->id }}, 'leaderboard-{{ $game->id }}');
+        // Listen for score updates from game
+        window.LeaderboardService.listenForGameScores({{ $game->id }});
+    }
+});
+</script>
+@endguest
 @endsection

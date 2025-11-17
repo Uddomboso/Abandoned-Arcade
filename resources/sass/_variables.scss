@@ -7,25 +7,35 @@
 $body-bg: #000000;
 $body-color: #ffffff;
 
-// neon blue theme colors
+// neon cyan theme colors (matching logo)
 // primary accent color with variations for hover states and effects
-$neon-blue: #00D9FF;
-$neon-blue-dark: #0099CC;
-$neon-blue-light: #33E5FF;
-$neon-blue-glow: rgba(0, 217, 255, 0.5);
+$neon-cyan: #00eaff;
+$neon-cyan-dark: #00a8cc;
+$neon-cyan-light: #33f0ff;
+$neon-cyan-glow: rgba(0, 234, 255, 0.6);
+
+// secondary purple/magenta accents
+$neon-purple: #bb00ff;
+$neon-purple-glow: rgba(187, 0, 255, 0.4);
+
+// legacy support (keeping for compatibility)
+$neon-blue: $neon-cyan;
+$neon-blue-dark: $neon-cyan-dark;
+$neon-blue-light: $neon-cyan-light;
+$neon-blue-glow: $neon-cyan-glow;
 
 // bootstrap theme colors
 // override bootstrap default colors to match dark neon theme
-$primary: $neon-blue;
+$primary: $neon-cyan;
 $secondary: #1a1a1a;
 $dark: #000000;
 $light: #1a1a1a;
 
-// background colors
+// background colors (pure black theme)
 // different shades of dark for layering and depth
 $bg-dark: #000000;
-$bg-darker: #0a0a0a;
-$bg-card: #111111;
+$bg-darker: #0b0f10;
+$bg-card: #000000;
 
 // text colors
 // text color variations for hierarchy and readability

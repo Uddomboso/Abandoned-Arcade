@@ -24,9 +24,9 @@
         {{-- main navigation bar --}}
         <nav class="navbar navbar-expand-md navbar-dark shadow-sm">
             <div class="container">
-                {{-- brand logo with neon glow effect --}}
-                <a class="navbar-brand neon-glow" href="{{ route('home') }}">
-                    Abandoned Arcade
+                {{-- brand logo with icon --}}
+                <a class="navbar-brand" href="{{ route('home') }}">
+                    <img src="{{ asset('assets/icon.png') }}" alt="Abandoned Arcade" style="height: 40px;">
                 </a>
                 {{-- mobile menu toggle button --}}
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
@@ -34,31 +34,41 @@
                 </button>
 
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    {{-- left side navigation links --}}
-                    <ul class="navbar-nav me-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('home') }}">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('games.index') }}">Games</a>
-                        </li>
-                        {{-- profile link only shown to authenticated users --}}
-                        @auth
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('profile.show') }}">Profile</a>
-                        </li>
-                        @endauth
-                    </ul>
-
-                    {{-- right side navigation (auth links) --}}
+                    {{-- search bar with autocomplete --}}
+                    <div class="navbar-search-wrapper me-auto me-md-3" style="max-width: 300px; position: relative;">
+                        <form method="GET" action="{{ route('games.index') }}" class="d-flex">
+                            <input 
+                                id="navbar-search-input"
+                                class="form-control form-control-sm" 
+                                type="search" 
+                                name="search" 
+                                placeholder="Search games..." 
+                                value="{{ request('search') }}" 
+                                aria-label="Search games"
+                                autocomplete="off">
+                            <button class="btn btn-outline-primary btn-sm ms-2" type="submit">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                    <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                                </svg>
+                            </button>
+                        </form>
+                        {{-- autocomplete dropdown --}}
+                        <div id="navbar-search-dropdown" class="search-dropdown" style="display: none;"></div>
+                    </div>
+                    
+                    {{-- right side navigation --}}
                     <ul class="navbar-nav ms-auto">
                         {{-- guest user display --}}
                         @guest
                             <li class="nav-item">
-                                <span class="nav-link text-muted small">
-                                    <span class="badge bg-secondary">Guest Mode</span>
-                                    <small class="ms-1">Data saved in browser</small>
+                                <span class="nav-link text-muted small" id="guest-display">
+                                    <span class="badge bg-secondary">Guest</span>
+                                    <small class="ms-1" id="guest-id">...</small>
                                 </span>
+                            </li>
+                            {{-- home link --}}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('home') }}">Home</a>
                             </li>
                             {{-- login link --}}
                             @if (Route::has('login'))
@@ -75,6 +85,14 @@
                             @endif
                         {{-- authenticated user display --}}
                         @else
+                            {{-- home link --}}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('home') }}">Home</a>
+                            </li>
+                            {{-- profile link --}}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('profile.show') }}">Profile</a>
+                            </li>
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                     {{ Auth::user()->name }}

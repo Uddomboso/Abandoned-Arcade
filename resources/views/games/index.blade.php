@@ -32,12 +32,27 @@
     <div class="row">
         @foreach($games as $game)
         <div class="col-md-3 mb-4">
-            <div class="card h-100 shadow-sm">
+            <div class="card game-card h-100">
+                @php
+                    $previewPath = null;
+                    if ($game->game_file_path) {
+                        $gameDir = dirname($game->game_file_path);
+                        if ($gameDir === '.' || $gameDir === '') {
+                            $gameDir = pathinfo($game->game_file_path, PATHINFO_FILENAME);
+                        }
+                        $previewFile = public_path('games/' . $gameDir . '/preview.png');
+                        if (file_exists($previewFile)) {
+                            $previewPath = asset('games/' . $gameDir . '/preview.png');
+                        }
+                    }
+                @endphp
                 @if($game->image_url)
                 <img src="{{ $game->image_url }}" class="card-img-top" alt="{{ $game->title }}" style="height: 200px; object-fit: cover;">
+                @elseif($previewPath)
+                <img src="{{ $previewPath }}" class="card-img-top" alt="{{ $game->title }}" style="height: 200px; object-fit: cover;">
                 @else
-                <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center" style="height: 200px;">
-                    <span class="text-white">No Image</span>
+                <div class="card-img-top d-flex align-items-center justify-content-center" style="height: 200px; background-color: #000000; border: 1px solid rgba(0, 234, 255, 0.2);">
+                    <span class="text-muted">No Image</span>
                 </div>
                 @endif
                 <div class="card-body">

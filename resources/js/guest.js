@@ -7,17 +7,40 @@ class GuestService {
     constructor() {
         // localstorage key for guest data
         this.storageKey = 'abandoned_arcade_guest_data';
+        this.guestIdKey = 'abandoned_arcade_guest_id';
         this.init();
+    }
+
+    // generate a unique guest ID with random numbers
+    // format: Guest + 8 random digits
+    generateGuestId() {
+        const randomNumbers = Math.floor(10000000 + Math.random() * 90000000); // 8-digit number
+        return `Guest${randomNumbers}`;
+    }
+
+    // get or create guest ID
+    // retrieves existing ID from localStorage or generates new one
+    getGuestId() {
+        let guestId = localStorage.getItem(this.guestIdKey);
+        if (!guestId) {
+            guestId = this.generateGuestId();
+            localStorage.setItem(this.guestIdKey, guestId);
+        }
+        return guestId;
     }
 
     // initialize guest data structure
     // creates default data object if none exists
     init() {
+        // ensure guest ID is generated
+        this.getGuestId();
+        
         if (!this.getData()) {
             this.setData({
                 save_states: [],      // array of game save states
                 favorites: [],        // array of favorited game ids
                 play_history: [],     // array of recently played games
+                scores: {},           // object to store game scores (gameId -> bestScore)
                 created_at: new Date().toISOString(),
             });
         }
@@ -51,7 +74,41 @@ class GuestService {
     // removes data from localstorage and reinitializes
     clear() {
         localStorage.removeItem(this.storageKey);
+        localStorage.removeItem(this.guestIdKey);
         this.init();
+    }
+
+    // ============ scores ============
+
+    // save score for a game (only in localStorage, not in database)
+    saveScore(gameId, score) {
+        const data = this.getData();
+        if (!data) return false;
+
+        if (!data.scores) {
+            data.scores = {};
+        }
+
+        // update best score if current score is higher
+        const currentBest = data.scores[gameId] || 0;
+        if (score > currentBest) {
+            data.scores[gameId] = score;
+            return this.setData(data);
+        }
+
+        return true;
+    }
+
+    // get best score for a game
+    getBestScore(gameId) {
+        const data = this.getData();
+        return data?.scores?.[gameId] || 0;
+    }
+
+    // get all scores for guest
+    getAllScores() {
+        const data = this.getData();
+        return data?.scores || {};
     }
 
     // ============ save states ============

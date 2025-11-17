@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Route;
 // public routes
 // accessible without authentication
 Route::get('/games', [GameController::class, 'index']);
+Route::get('/games/autocomplete', [GameController::class, 'autocomplete'])->name('api.games.autocomplete');
 Route::get('/games/{id}', [GameController::class, 'show']);
 Route::get('/reviews', [ReviewController::class, 'index']);
 Route::get('/reviews/{id}', [ReviewController::class, 'show']);

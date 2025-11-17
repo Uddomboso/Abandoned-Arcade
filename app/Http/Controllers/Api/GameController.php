@@ -51,6 +51,71 @@ class GameController extends Controller
         return GameResource::collection($games);
     }
 
+    // autocomplete search endpoint
+    // returns games starting with search term
+    // limit is based on number of characters in search term
+    public function autocomplete(Request $request)
+    {
+        $searchTerm = $request->get('q', '');
+        
+        if (empty($searchTerm)) {
+            return response()->json(['games' => []]);
+        }
+
+        // limit results based on number of characters
+        // 1 char = all games, 2 chars = 2 games, 3 chars = 3 games, etc.
+        $limit = strlen($searchTerm);
+        if ($limit === 1) {
+            $limit = 100; // Show all games for single character
+        }
+
+        // search games starting with the search term (case insensitive)
+        // handle multi-word searches by checking if title starts with any word
+        $searchTermLower = strtolower($searchTerm);
+        $words = explode(' ', $searchTermLower);
+        
+        $query = Game::with('genre')
+            ->where('is_active', true)
+            ->where(function($q) use ($searchTermLower, $words) {
+                // Match titles starting with the full search term
+                $q->whereRaw('LOWER(title) LIKE ?', [$searchTermLower . '%']);
+                
+                // Also match if any word in the title starts with the search term
+                if (count($words) > 1) {
+                    foreach ($words as $word) {
+                        if (strlen($word) > 0) {
+                            $q->orWhereRaw('LOWER(title) LIKE ?', ['%' . $word . '%']);
+                        }
+                    }
+                }
+            })
+            ->orderBy('title', 'asc')
+            ->limit($limit);
+
+        $games = $query->get();
+
+        // format response for autocomplete
+        $results = $games->map(function ($game) {
+            return [
+                'id' => $game->id,
+                'title' => $game->title,
+                'genre' => $game->genre->name ?? 'Unknown',
+                'url' => url('/games/' . $game->id),
+            ];
+        });
+
+        // check if there are more results
+        $hasMore = Game::where('is_active', true)
+            ->where('title', 'like', $searchTerm . '%')
+            ->count() > $limit;
+
+        return response()->json([
+            'games' => $results,
+            'has_more' => $hasMore,
+            'search_term' => $searchTerm,
+        ]);
+    }
+
     // create new game
     // validates input and creates game record
     // requires authentication
