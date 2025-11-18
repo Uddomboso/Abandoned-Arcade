@@ -67,6 +67,6 @@ EXPOSE 80
 
 # Start command - use php artisan serve for Railway compatibility
 # Railway provides PORT environment variable dynamically
-# Using shell form to allow environment variable expansion
-CMD sh -c "php artisan migrate --force || true && php artisan serve --host=0.0.0.0 --port=\${PORT:-80}"
+# Clear config cache to ensure fresh environment variables are loaded
+CMD sh -c "php artisan config:clear && php artisan cache:clear && php artisan migrate --force || true && php artisan serve --host=0.0.0.0 --port=\${PORT:-80}"
 

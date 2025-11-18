@@ -52,7 +52,14 @@ return [
     |
     */
 
-    'url' => env('APP_URL', 'http://localhost'),
+    'url' => function() {
+        $url = env('APP_URL', 'http://localhost');
+        // Sanitize and validate URL
+        if (empty($url) || !filter_var($url, FILTER_VALIDATE_URL)) {
+            return 'http://localhost';
+        }
+        return rtrim($url, '/');
+    }(),
 
     /*
     |--------------------------------------------------------------------------
