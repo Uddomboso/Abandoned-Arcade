@@ -62,9 +62,11 @@ RUN echo '<VirtualHost *:80>\n\
     </Directory>\n\
 </VirtualHost>' > /etc/apache2/sites-available/000-default.conf
 
-# Expose port
+# Expose port (Railway will provide PORT via environment variable)
 EXPOSE 80
 
-# Start Apache
-CMD ["apache2-foreground"]
+# Start command - use php artisan serve for Railway compatibility
+# Railway provides PORT environment variable dynamically
+# Using shell form to allow environment variable expansion
+CMD sh -c "php artisan migrate --force || true && php artisan serve --host=0.0.0.0 --port=\${PORT:-80}"
 
