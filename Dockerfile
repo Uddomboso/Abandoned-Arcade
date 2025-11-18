@@ -32,7 +32,9 @@ COPY . .
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
 # Install Node dependencies and build assets
-RUN npm ci && npm run build
+RUN npm ci && \
+    NODE_ENV=production npm run build && \
+    ls -la public/build || echo "Build directory check"
 
 # Create storage link
 RUN php artisan storage:link || true
@@ -40,7 +42,8 @@ RUN php artisan storage:link || true
 # Set permissions
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html/storage \
-    && chmod -R 755 /var/www/html/bootstrap/cache
+    && chmod -R 755 /var/www/html/bootstrap/cache \
+    && chmod -R 755 /var/www/html/public/build || true
 
 # Configure Apache
 RUN echo '<VirtualHost *:80>\n\
