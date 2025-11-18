@@ -26,7 +26,7 @@ return [
     |
     */
 
-    'redirect_uri' => env('APP_URL') . '/auth/workos/callback',
+    'redirect_uri' => (env('APP_URL') ?: config('app.url', 'http://localhost')) . '/auth/workos/callback',
 
 ];
 

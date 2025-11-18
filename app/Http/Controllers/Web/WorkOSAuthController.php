@@ -27,7 +27,7 @@ class WorkOSAuthController extends Controller
      */
     public function redirectToWorkOS(Request $request)
     {
-        $redirectUri = env('APP_URL') . '/auth/workos/callback';
+        $redirectUri = config('app.url', 'http://localhost') . '/auth/workos/callback';
         
         try {
             // Get authorization URL using AuthKit provider
