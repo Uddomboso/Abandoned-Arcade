@@ -34,7 +34,10 @@ RUN composer install --no-dev --optimize-autoloader --no-interaction
 # Install Node dependencies and build assets
 RUN npm ci && \
     NODE_ENV=production npm run build && \
-    ls -la public/build || echo "Build directory check"
+    echo "=== Build verification ===" && \
+    ls -la public/build/ && \
+    echo "=== Manifest check ===" && \
+    test -f public/build/.vite/manifest.json && echo "Manifest exists" || echo "WARNING: Manifest not found"
 
 # Create storage link
 RUN php artisan storage:link || true
@@ -51,6 +54,11 @@ RUN echo '<VirtualHost *:80>\n\
     <Directory /var/www/html/public>\n\
         AllowOverride All\n\
         Require all granted\n\
+        Options -Indexes\n\
+    </Directory>\n\
+    <Directory /var/www/html/public/games>\n\
+        Options -Indexes\n\
+        AllowOverride All\n\
     </Directory>\n\
 </VirtualHost>' > /etc/apache2/sites-available/000-default.conf
 
