@@ -4,12 +4,20 @@
 <div class="container">
     <div class="row mb-4">
         <div class="col-md-8">
-            <h1>All Games</h1>
+            @if(request('search'))
+                <h1>Search Results for "{{ request('search') }}"</h1>
+                <p class="text-muted">Found {{ $games->total() }} {{ Str::plural('game', $games->total()) }}</p>
+            @else
+                <h1>All Games</h1>
+            @endif
         </div>
         <div class="col-md-4">
-            <form method="GET" action="{{ route('games.index') }}" class="d-flex">
-                <input class="form-control me-2" type="search" name="search" placeholder="Search games..." value="{{ request('search') }}">
+            <form method="GET" action="{{ route('games.index') }}" class="d-flex" id="games-search-form">
+                <input class="form-control me-2" type="search" name="search" placeholder="Search games..." value="{{ request('search') }}" id="games-search-input">
                 <button class="btn btn-outline-primary" type="submit">Search</button>
+                @if(request('search'))
+                    <a href="/games" class="btn btn-outline-secondary ms-2">Clear</a>
+                @endif
             </form>
         </div>
     </div>

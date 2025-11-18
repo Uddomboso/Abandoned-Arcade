@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use App\Models\Game;
 use App\Models\Genre;
+use App\Models\SaveState;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
 // game controller for web routes
@@ -25,12 +27,12 @@ class GameController extends Controller
             });
         }
 
-        // search by title or description if search parameter provided
+        // search by title or description if search parameter provided (case insensitive)
         if ($request->has('search') && !empty($request->search)) {
-            $searchTerm = $request->search;
+            $searchTerm = trim($request->search);
             $query->where(function($q) use ($searchTerm) {
-                $q->where('title', 'like', '%' . $searchTerm . '%')
-                  ->orWhere('description', 'like', '%' . $searchTerm . '%');
+                $q->whereRaw('LOWER(title) LIKE ?', ['%' . strtolower($searchTerm) . '%'])
+                  ->orWhereRaw('LOWER(description) LIKE ?', ['%' . strtolower($searchTerm) . '%']);
             });
         }
 
@@ -49,24 +51,34 @@ class GameController extends Controller
     }
 
     // display single game details page
-    // shows game information, reviews, and related games
+    // shows game information and related games
     public function show(string $id)
     {
-        // load game with genre and reviews (including review authors)
-        $game = Game::with(['genre', 'reviews.user'])
+        // load game with genre relationship
+        $game = Game::with('genre')
             ->where('is_active', true)
             ->findOrFail($id);
 
-        // get related games from same genre
-        // excludes current game and limits to 4 results
-        $relatedGames = Game::with('genre')
+        // get one related game from same genre
+        // excludes current game
+        $relatedGame = Game::with('genre')
             ->where('is_active', true)
             ->where('genre_id', $game->genre_id)
             ->where('id', '!=', $game->id)
-            ->take(4)
+            ->first();
+
+        // get leaderboard ranking of users by their play counts
+        // ranked by number of plays (save states), then by most recent play
+        $leaderboard = SaveState::where('game_id', $game->id)
+            ->select('user_id', DB::raw('COUNT(*) as play_count'), DB::raw('MAX(last_played_at) as last_played'))
+            ->with('user')
+            ->groupBy('user_id')
+            ->orderBy('play_count', 'desc')
+            ->orderBy('last_played', 'desc')
+            ->limit(10)
             ->get();
 
-        return view('games.show', compact('game', 'relatedGames'));
+        return view('games.show', compact('game', 'relatedGame', 'leaderboard'));
     }
 
     // display game play page

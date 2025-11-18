@@ -83,9 +83,7 @@ window.onload = function() {
     var gameover = false;
     
     // Gui buttons
-    var buttons = [ { x: 30, y: 240, width: 150, height: 50, text: "New Game"},
-                    { x: 30, y: 300, width: 150, height: 50, text: "Show Moves"},
-                    { x: 30, y: 360, width: 150, height: 50, text: "Enable AI Bot"}];
+    var buttons = [ { x: 30, y: 240, width: 150, height: 50, text: "New Game"}];
     
     // Initialize the game
     function init() {
@@ -831,14 +829,6 @@ window.onload = function() {
                 if (i == 0) {
                     // New Game
                     newGame();
-                } else if (i == 1) {
-                    // Show Moves
-                    showmoves = !showmoves;
-                    buttons[i].text = (showmoves?"Hide":"Show") + " Moves";
-                } else if (i == 2) {
-                    // AI Bot
-                    aibot = !aibot;
-                    buttons[i].text = (aibot?"Disable":"Enable") + " AI Bot";
                 }
             }
         }

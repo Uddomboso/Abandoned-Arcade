@@ -13,9 +13,6 @@
             <div class="col-md-3 col-sm-6 mb-3">
                 <a href="{{ route('games.index', ['genre' => $genre->slug]) }}" class="text-decoration-none">
                     <div class="genre-card-neon">
-                        <div class="genre-icon-circle">
-                            <span class="genre-icon">🎮</span>
-                        </div>
                         <h5 class="genre-title">{{ $genre->name }}</h5>
                         <p class="genre-count">{{ $genre->games_count ?? 0 }} games</p>
                     </div>

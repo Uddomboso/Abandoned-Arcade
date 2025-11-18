@@ -32,6 +32,9 @@ Route::post('/auth/logout', [WorkOSAuthController::class, 'logout'])->name('logo
 // these routes require user to be logged in
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
-    Route::get('/profile/collection', [ProfileController::class, 'collection'])->name('profile.collection');
     Route::post('/reviews', [\App\Http\Controllers\Web\ReviewController::class, 'store'])->name('reviews.store');
+    // save game state route (uses session auth)
+    Route::post('/saves', [\App\Http\Controllers\Api\SaveController::class, 'store'])->name('saves.store');
+    // submit game score route (uses session auth)
+    Route::post('/scores', [\App\Http\Controllers\Api\ScoreController::class, 'store'])->name('scores.store');
 });

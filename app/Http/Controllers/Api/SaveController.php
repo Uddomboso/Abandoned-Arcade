@@ -19,7 +19,7 @@ class SaveController extends Controller
     {
         // start query with game relationship for current user
         $query = SaveState::with('game')
-            ->where('user_id', $request->user()->id);
+            ->where('user_id', auth()->id());
 
         // filter by game if game_id parameter provided
         if ($request->has('game_id')) {
@@ -57,40 +57,16 @@ class SaveController extends Controller
         $validated = $request->validate([
             'game_id' => 'required|exists:games,id',
             'save_name' => 'nullable|string|max:255',
-            'save_data' => 'required|array',
+            'save_data' => 'nullable|array',
         ]);
 
-        // check if save state already exists for this user and game
-        // if exists, update it instead of creating duplicate
-        $existingSave = SaveState::where('user_id', $request->user()->id)
-            ->where('game_id', $validated['game_id'])
-            ->first();
-
-        if ($existingSave) {
-            // update existing save with new data
-            $existingSave->update([
-                'save_name' => $validated['save_name'] ?? $existingSave->save_name,
-                'save_data' => $validated['save_data'],
-                'last_played_at' => now(),
-            ]);
-
-            return response()->json([
-                'message' => 'Save state updated successfully',
-                'data' => [
-                    'id' => $existingSave->id,
-                    'game_id' => $existingSave->game_id,
-                    'save_name' => $existingSave->save_name,
-                    'last_played_at' => $existingSave->last_played_at->toISOString(),
-                ],
-            ]);
-        }
-
-        // create new save state
+        // always create new save state (each save counts as a play)
+        // this ensures accurate play count tracking for leaderboard
         $saveState = SaveState::create([
-            'user_id' => $request->user()->id,
+            'user_id' => auth()->id(),
             'game_id' => $validated['game_id'],
             'save_name' => $validated['save_name'] ?? 'Auto Save',
-            'save_data' => $validated['save_data'],
+            'save_data' => $validated['save_data'] ?? [],
             'last_played_at' => now(),
         ]);
 
@@ -112,7 +88,7 @@ class SaveController extends Controller
     {
         // load save state with game, ensure it belongs to current user
         $saveState = SaveState::with('game')
-            ->where('user_id', $request->user()->id)
+            ->where('user_id', auth()->id())
             ->findOrFail($id);
 
         // return save state with full save data
@@ -137,7 +113,7 @@ class SaveController extends Controller
     public function update(Request $request, string $id)
     {
         // find save state and ensure it belongs to current user
-        $saveState = SaveState::where('user_id', $request->user()->id)
+        $saveState = SaveState::where('user_id', auth()->id())
             ->findOrFail($id);
 
         // validate request data
@@ -168,7 +144,7 @@ class SaveController extends Controller
     public function destroy(Request $request, string $id)
     {
         // find save state and ensure it belongs to current user
-        $saveState = SaveState::where('user_id', $request->user()->id)
+        $saveState = SaveState::where('user_id', auth()->id())
             ->findOrFail($id);
 
         // delete save state

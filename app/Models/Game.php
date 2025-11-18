@@ -75,4 +75,11 @@ class Game extends Model
     {
         return $this->hasMany(PreservationLog::class);
     }
+
+    // relationship: game has many scores
+    // tracks high scores achieved by users
+    public function scores(): HasMany
+    {
+        return $this->hasMany(GameScore::class);
+    }
 }

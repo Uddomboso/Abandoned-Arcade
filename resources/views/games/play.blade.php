@@ -258,11 +258,10 @@
                 <div class="card-body">
                     @auth
                     {{-- authenticated user actions --}}
-                    <button class="btn btn-primary w-100 mb-2" onclick="saveGameState()">Save Progress</button>
-                    <a href="{{ route('games.show', $game->id) }}" class="btn btn-outline-primary w-100 mb-2">Rate & Review</a>
+                    <button id="saveProgressBtn" class="btn btn-primary w-100 mb-2" onclick="saveGameState()">Save Progress</button>
                     @else
                     {{-- guest user message --}}
-                    <p class="text-muted small">Login to save your progress and rate games</p>
+                    <p class="text-muted small">Login to save your progress</p>
                     <a href="{{ route('login') }}" class="btn btn-primary w-100">Login</a>
                     @endauth
                 </div>
@@ -274,35 +273,242 @@
     </div>
 </div>
 
+{{-- Save Game Modal --}}
+@auth
+<div class="modal fade" id="saveGameModal" tabindex="-1" aria-labelledby="saveGameModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="saveGameModalLabel">Game Ended - Save Your Progress?</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="mb-3">Would you like to save your game progress?</p>
+                <div class="mb-3">
+                    <label for="saveName" class="form-label">Save Name (Optional)</label>
+                    <input type="text" class="form-control" id="saveName" placeholder="e.g., Level 3, High Score Run">
+                </div>
+                <div class="alert alert-info mb-0">
+                    <small><strong>Note:</strong> Your score has been automatically saved to the leaderboard!</small>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Skip</button>
+                <button type="button" class="btn btn-primary" onclick="saveGameState()">Save Progress</button>
+            </div>
+        </div>
+    </div>
+</div>
+@endauth
+
 {{-- save game state function for authenticated users --}}
 @auth
 <script>
-function saveGameState() {
-    {{-- get game state from localstorage or game itself --}}
-    const gameState = localStorage.getItem('game_state_{{ $game->id }}') || '{}';
+let isSaving = false; {{-- prevent multiple simultaneous saves --}}
+
+{{-- Show score notification (non-intrusive) --}}
+function showScoreNotification(message, type) {
+    {{-- Create notification element --}}
+    const notification = document.createElement('div');
+    notification.className = 'alert alert-' + (type === 'success' ? 'success' : 'info') + ' alert-dismissible fade show position-fixed';
+    notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);';
+    notification.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    `;
+    document.body.appendChild(notification);
     
-    {{-- send save state to api --}}
-    fetch('/api/saves', {
+    {{-- Auto-remove after 3 seconds --}}
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.remove();
+        }
+    }, 3000);
+}
+
+{{-- Helper function for games to submit scores directly --}}
+{{-- Games can call this from their iframe: parent.submitGameScore(score) --}}
+{{-- Or games can send postMessage with {type: 'gameEnd', score: 123, gameId: {{ $game->id }}} --}}
+window.submitGameScore = function(score, showNotification = true) {
+    if (!score || score < 0) {
+        console.warn('Invalid score provided:', score);
+        return Promise.reject('Invalid score');
+    }
+    
+    return fetch('{{ route("scores.store") }}', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + localStorage.getItem('api_token'),
-            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Accept': 'application/json'
         },
+        credentials: 'same-origin',
         body: JSON.stringify({
             game_id: {{ $game->id }},
-            save_data: JSON.parse(gameState)
+            score: parseInt(score)
         })
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(err => {
+                console.error('Score submission error:', err);
+                return Promise.reject(err);
+            });
+        }
+        return response.json();
+    })
     .then(data => {
-        alert('Game state saved!');
+        console.log('Score submitted successfully', data);
+        if (showNotification) {
+            if (data.data && data.data.is_new_high_score) {
+                showScoreNotification('New high score! ' + data.data.score.toLocaleString(), 'success');
+            } else {
+                showScoreNotification('Score saved: ' + data.data.score.toLocaleString(), 'info');
+            }
+        }
+        return data;
     })
     .catch(error => {
-        console.error('Error:', error);
-        alert('Failed to save game state');
+        console.error('Error submitting score:', error);
+        if (showNotification) {
+            const errorMessage = error.message || (typeof error === 'string' ? error : 'Failed to submit score');
+            showScoreNotification(errorMessage, 'danger');
+        }
+        return Promise.reject(error);
+    });
+};
+
+
+function saveGameState(gameData = null) {
+    {{-- prevent double-clicks and multiple saves --}}
+    if (isSaving) {
+        console.log('Save already in progress, please wait...');
+        return;
+    }
+    
+    isSaving = true;
+    const saveBtn = document.getElementById('saveProgressBtn');
+    if (saveBtn && !gameData) { {{-- Only disable button for manual saves --}}
+        saveBtn.disabled = true;
+        saveBtn.textContent = 'Saving...';
+    }
+    
+    {{-- get game state from parameter, localstorage, or game itself --}}
+    let gameState = gameData;
+    if (!gameState) {
+        const stored = localStorage.getItem('game_state_{{ $game->id }}');
+        gameState = stored ? JSON.parse(stored) : {};
+    }
+    const saveData = typeof gameState === 'string' ? JSON.parse(gameState) : (gameState || {});
+    
+    {{-- send save state to web route using session auth --}}
+    fetch('{{ route("saves.store") }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Accept': 'application/json'
+        },
+        credentials: 'same-origin',
+        body: JSON.stringify({
+            game_id: {{ $game->id }},
+            save_data: saveData
+        })
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(err => {
+                console.error('Save error response:', err);
+                return Promise.reject(err);
+            });
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Game state saved successfully', data);
+        {{-- Show success message --}}
+        if (!gameData) { {{-- Only show alert if manually triggered --}}
+            alert('Game state saved!');
+        }
+    })
+    .catch(error => {
+        console.error('Error saving game state:', error);
+        const errorMessage = error.message || (typeof error === 'string' ? error : 'Failed to save game state');
+        if (!gameData) { {{-- Only show alert if manually triggered --}}
+            alert(errorMessage);
+        }
+    })
+    .finally(() => {
+        {{-- re-enable button and reset state --}}
+        isSaving = false;
+        if (saveBtn && !gameData) {
+            saveBtn.disabled = false;
+            saveBtn.textContent = 'Save Progress';
+        }
     });
 }
+
+
+{{-- Listen for game end events and automatically submit scores --}}
+document.addEventListener('DOMContentLoaded', function() {
+    {{-- Listen for custom game end event from iframe --}}
+    window.addEventListener('message', function(event) {
+        {{-- Check if message is from game iframe and indicates game end --}}
+        if (event.data && event.data.type === 'gameEnd' && event.data.gameId === {{ $game->id }}) {
+            console.log('Game ended, processing score and save...');
+            
+            {{-- Store game data for saving --}}
+            if (event.data.gameData) {
+                localStorage.setItem('game_state_{{ $game->id }}', JSON.stringify(event.data.gameData));
+            }
+            
+            {{-- Automatically submit score if provided by game --}}
+            if (event.data.score !== undefined && event.data.score > 0) {
+                console.log('Auto-submitting score:', event.data.score);
+                {{-- Auto-submit without showing notification (silent) --}}
+                submitGameScore(event.data.score, false)
+                    .then((data) => {
+                        console.log('Score automatically submitted successfully');
+                        {{-- Only show notification if it's a new high score --}}
+                        if (data.data && data.data.is_new_high_score) {
+                            showScoreNotification('New high score! ' + data.data.score.toLocaleString(), 'success');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Failed to auto-submit score:', error);
+                        {{-- Show error notification if auto-submit fails --}}
+                        showScoreNotification('Failed to save score. Please try again.', 'danger');
+                    });
+            }
+            
+            {{-- Show save modal for game state (optional) --}}
+            @auth
+            if (event.data.gameData) {
+                {{-- Show save modal for game progress --}}
+                const modal = new bootstrap.Modal(document.getElementById('saveGameModal'));
+                modal.show();
+            }
+            @endauth
+        }
+    });
+    
+    {{-- Also listen for game over events in iframe --}}
+    const gameIframe = document.getElementById('game-iframe');
+    if (gameIframe) {
+        gameIframe.addEventListener('load', function() {
+            try {
+                const iframeWindow = gameIframe.contentWindow;
+                if (iframeWindow) {
+                    {{-- Try to hook into game's game over event --}}
+                    {{-- This will depend on the specific game implementation --}}
+                    console.log('Game iframe loaded, ready to listen for game end events');
+                }
+            } catch (e) {
+                console.log('Cannot access iframe for game end detection');
+            }
+        });
+    }
+});
 </script>
 @endauth
 
@@ -320,3 +526,5 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 @endguest
 @endsection
+
+

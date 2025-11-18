@@ -30,7 +30,7 @@ class SearchAutocomplete {
             }
         });
         
-        // handle input with debounce
+        // handle input with debounce (reduced delay for faster results)
         this.searchInput.addEventListener('input', (e) => {
             const query = e.target.value.trim();
             
@@ -44,11 +44,11 @@ class SearchAutocomplete {
                 this.currentRequest.abort();
             }
             
-            // debounce search
+            // debounce search (reduced from 200ms to 150ms for faster response)
             clearTimeout(this.debounceTimer);
             this.debounceTimer = setTimeout(() => {
                 this.performSearch(query);
-            }, 200);
+            }, 150);
         });
         
         // handle keyboard navigation
@@ -57,6 +57,7 @@ class SearchAutocomplete {
                 this.hideDropdown();
                 this.searchInput.blur();
             }
+            // Let Enter key submit the form naturally - don't prevent default
         });
     }
     

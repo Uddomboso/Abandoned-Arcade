@@ -36,7 +36,7 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     {{-- search bar with autocomplete --}}
                     <div class="navbar-search-wrapper me-auto me-md-3" style="max-width: 300px; position: relative;">
-                        <form method="GET" action="{{ route('games.index') }}" class="d-flex">
+                        <form method="GET" action="{{ route('games.index') }}" class="d-flex" id="navbar-search-form">
                             <input 
                                 id="navbar-search-input"
                                 class="form-control form-control-sm" 
@@ -100,7 +100,6 @@
 
                                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                                     <a class="dropdown-item" href="{{ route('profile.show') }}">My Profile</a>
-                                    <a class="dropdown-item" href="{{ route('profile.collection') }}">My Collection</a>
                                     <div class="dropdown-divider"></div>
                                     {{-- logout link with form submission --}}
                                     <a class="dropdown-item" href="{{ route('logout') }}"

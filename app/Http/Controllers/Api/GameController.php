@@ -69,8 +69,8 @@ class GameController extends Controller
             $limit = 100; // Show all games for single character
         }
 
-        // search games starting with the search term (case insensitive)
-        // handle multi-word searches by checking if title starts with any word
+        // search games containing the search term (case insensitive)
+        // match titles that start with or contain the search term
         $searchTermLower = strtolower($searchTerm);
         $words = explode(' ', $searchTermLower);
         
@@ -80,15 +80,23 @@ class GameController extends Controller
                 // Match titles starting with the full search term
                 $q->whereRaw('LOWER(title) LIKE ?', [$searchTermLower . '%']);
                 
-                // Also match if any word in the title starts with the search term
+                // Also match if title contains the full search term
+                $q->orWhereRaw('LOWER(title) LIKE ?', ['%' . $searchTermLower . '%']);
+                
+                // For multi-word searches, match if any word in the title starts with any search word
                 if (count($words) > 1) {
                     foreach ($words as $word) {
                         if (strlen($word) > 0) {
-                            $q->orWhereRaw('LOWER(title) LIKE ?', ['%' . $word . '%']);
+                            $q->orWhereRaw('LOWER(title) LIKE ?', [$word . '%']);
+                            $q->orWhereRaw('LOWER(title) LIKE ?', ['% ' . $word . '%']);
                         }
                     }
+                } else {
+                    // For single word, also check if it appears anywhere in the title
+                    $q->orWhereRaw('LOWER(title) LIKE ?', ['%' . $searchTermLower . '%']);
                 }
             })
+            ->orderByRaw("CASE WHEN LOWER(title) LIKE ? THEN 1 ELSE 2 END", [$searchTermLower . '%'])
             ->orderBy('title', 'asc')
             ->limit($limit);
 
@@ -104,9 +112,9 @@ class GameController extends Controller
             ];
         });
 
-        // check if there are more results
+        // check if there are more results (case insensitive)
         $hasMore = Game::where('is_active', true)
-            ->where('title', 'like', $searchTerm . '%')
+            ->whereRaw('LOWER(title) LIKE ?', ['%' . $searchTermLower . '%'])
             ->count() > $limit;
 
         return response()->json([

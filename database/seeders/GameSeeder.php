@@ -24,9 +24,14 @@ class GameSeeder extends Seeder
             ['name' => 'Puzzle', 'description' => 'Puzzle and brain games']
         );
         
-        $actionGenre = Genre::firstOrCreate(
-            ['slug' => 'action'],
-            ['name' => 'Action', 'description' => 'Action-packed games']
+        // Remove Action genre if it exists and ensure Other exists
+        // Delete Action genre completely
+        Genre::where('slug', 'action')->delete();
+        
+        // Create or get Other genre
+        $otherGenre = Genre::firstOrCreate(
+            ['slug' => 'other'],
+            ['name' => 'Other', 'description' => 'Other games']
         );
         
         // Pacman

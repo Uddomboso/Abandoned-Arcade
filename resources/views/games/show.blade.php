@@ -43,25 +43,20 @@
                     </div>
                     <div class="col-md-8">
                         <div class="card-body">
-                            <h1 class="card-title">{{ $game->title }}</h1>
-                            <p class="card-text">{{ $game->description }}</p>
+                            <h1 class="card-title text-white">{{ $game->title }}</h1>
+                            <p class="card-text text-white" style="font-size: 1rem; line-height: 1.6;">{{ $game->description }}</p>
                             <div class="mb-3">
                                 <span class="badge bg-primary me-2">{{ $game->genre->name }}</span>
-                                @if($game->rating > 0)
-                                <span class="badge bg-warning text-dark me-2">{{ number_format($game->rating, 1) }} / 5.0 ({{ $game->rating_count }} reviews)</span>
-                                @else
-                                <span class="badge bg-secondary me-2">Not rated yet</span>
-                                @endif
                                 <span class="badge bg-info">{{ $game->play_count }} plays</span>
                             </div>
                             @if($game->developer)
-                            <p class="card-text"><small class="text-muted">Developer: {{ $game->developer }}</small></p>
+                            <p class="card-text"><small class="text-white-50" style="font-size: 0.9rem;">Developer: {{ $game->developer }}</small></p>
                             @endif
                             @if($game->publisher)
-                            <p class="card-text"><small class="text-muted">Publisher: {{ $game->publisher }}</small></p>
+                            <p class="card-text"><small class="text-white-50" style="font-size: 0.9rem;">Publisher: {{ $game->publisher }}</small></p>
                             @endif
                             @if($game->release_date)
-                            <p class="card-text"><small class="text-muted">Released: {{ $game->release_date->format('F Y') }}</small></p>
+                            <p class="card-text"><small class="text-white-50" style="font-size: 0.9rem;">Released: {{ $game->release_date->format('F Y') }}</small></p>
                             @endif
                             <a href="{{ route('games.play', $game->id) }}" class="btn btn-primary btn-lg mt-3">Play Game</a>
                             @if($game->game_url && $game->source_type !== 'embedded')
@@ -72,121 +67,27 @@
                 </div>
             </div>
 
-            <!-- Rating Form -->
-            @auth
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h3>Rate This Game</h3>
-                </div>
-                <div class="card-body">
-                    @if(session('success'))
-                        <div class="alert alert-success">
-                            {{ session('success') }}
-                        </div>
-                    @endif
-                    
-                    @if($errors->any())
-                        <div class="alert alert-danger">
-                            <ul class="mb-0">
-                                @foreach($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    @endif
-                    
-                    @php
-                        $userReview = $game->reviews->where('user_id', auth()->id())->first();
-                    @endphp
-                    
-                    @if($userReview)
-                        <div class="alert alert-info">
-                            <strong>You already rated this game:</strong> {{ $userReview->rating }}/5
-                            @if($userReview->comment)
-                                <br><em>"{{ $userReview->comment }}"</em>
-                            @endif
-                        </div>
-                    @else
-                        <form id="ratingForm" method="POST" action="{{ route('reviews.store') }}">
-                            @csrf
-                            <input type="hidden" name="game_id" value="{{ $game->id }}">
-                            
-                            <div class="mb-3">
-                                <label for="rating" class="form-label">Rating</label>
-                                <select class="form-select @error('rating') is-invalid @enderror" name="rating" id="rating" required>
-                                    <option value="">Select a rating</option>
-                                    <option value="5" {{ old('rating') == '5' ? 'selected' : '' }}>5 - Excellent</option>
-                                    <option value="4" {{ old('rating') == '4' ? 'selected' : '' }}>4 - Very Good</option>
-                                    <option value="3" {{ old('rating') == '3' ? 'selected' : '' }}>3 - Good</option>
-                                    <option value="2" {{ old('rating') == '2' ? 'selected' : '' }}>2 - Fair</option>
-                                    <option value="1" {{ old('rating') == '1' ? 'selected' : '' }}>1 - Poor</option>
-                                </select>
-                                @error('rating')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            
-                            <div class="mb-3">
-                                <label for="comment" class="form-label">Review (Optional)</label>
-                                <textarea class="form-control @error('comment') is-invalid @enderror" name="comment" id="comment" rows="3" maxlength="1000" placeholder="Share your thoughts about this game...">{{ old('comment') }}</textarea>
-                                <small class="text-muted">Maximum 1000 characters</small>
-                                @error('comment')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            
-                            <button type="submit" class="btn btn-primary">Submit Rating</button>
-                        </form>
-                    @endif
-                </div>
-            </div>
-            @else
+            @guest
             <div class="card mb-4">
                 <div class="card-body">
-                    <p class="mb-2">Want to rate this game?</p>
-                    <a href="{{ route('login') }}" class="btn btn-primary">Login to Rate</a>
-                    <a href="{{ route('register') }}" class="btn btn-outline-primary">Create Account</a>
+                    <p class="mb-2">Want to see your rank?</p>
+                    <a href="{{ route('login') }}" class="btn btn-primary">Log in</a>
+                    <a href="{{ route('register') }}" class="btn btn-outline-primary">Sign up</a>
                 </div>
             </div>
-            @endauth
-
-            <!-- Reviews Section -->
-            <div class="card">
-                <div class="card-header">
-                    <h3>Reviews ({{ $game->reviews->count() }})</h3>
-                </div>
-                <div class="card-body">
-                    @if($game->reviews->count() > 0)
-                        @foreach($game->reviews->take(10) as $review)
-                        <div class="border-bottom pb-3 mb-3">
-                            <div class="d-flex justify-content-between mb-2">
-                                <strong>{{ $review->user->name }}</strong>
-                                <span class="badge bg-warning text-dark">{{ $review->rating }}/5</span>
-                            </div>
-                            @if($review->comment)
-                            <p class="mb-0">{{ $review->comment }}</p>
-                            @endif
-                            <small class="text-muted">{{ $review->created_at->diffForHumans() }}</small>
-                        </div>
-                        @endforeach
-                    @else
-                    <p class="text-muted">No reviews yet. Be the first to review!</p>
-                    @endif
-                </div>
-            </div>
+            @endguest
         </div>
 
         <!-- Sidebar -->
         <div class="col-md-4">
             <!-- Related Games -->
-            @if($relatedGames->count() > 0)
+            @if($relatedGame)
             <div class="card mb-4">
                 <div class="card-header">
                     <h5>Related Games</h5>
                 </div>
                 <div class="card-body">
-                    @foreach($relatedGames as $relatedGame)
-                    <div class="d-flex mb-3">
+                    <div class="d-flex">
                         @php
                             $relatedPreviewPath = null;
                             if ($relatedGame->game_file_path) {
@@ -222,22 +123,36 @@
                             @endif
                         </div>
                     </div>
-                    @endforeach
                 </div>
             </div>
             @endif
 
-            <!-- Game Stats -->
+            <!-- Top Players -->
             <div class="card">
                 <div class="card-header">
-                    <h5>Game Stats</h5>
+                    <h5>Top Players</h5>
                 </div>
                 <div class="card-body">
-                    <p><strong>Genre:</strong> {{ $game->genre->name }}</p>
-                    <p><strong>Rating:</strong> {{ $game->rating > 0 ? number_format($game->rating, 1) . ' / 5.0' : 'Not rated yet' }}</p>
-                    <p><strong>Total Reviews:</strong> {{ $game->rating_count }}</p>
-                    <p><strong>Total Plays:</strong> {{ $game->play_count }}</p>
-                    <p><strong>Added:</strong> {{ $game->created_at->format('M d, Y') }}</p>
+                    @if($leaderboard->count() > 0)
+                        <ol class="list-group list-group-numbered">
+                            @foreach($leaderboard as $index => $player)
+                                <li class="list-group-item d-flex justify-content-between align-items-start">
+                                    <div class="ms-2 me-auto">
+                                        <div class="fw-bold">{{ $player->user->name }}</div>
+                                        <small class="text-muted">
+                                            {{ $player->play_count }} {{ Str::plural('play', $player->play_count) }}
+                                            @if($player->last_played)
+                                                • {{ \Carbon\Carbon::parse($player->last_played)->diffForHumans() }}
+                                            @endif
+                                        </small>
+                                    </div>
+                                    <span class="badge bg-primary rounded-pill">#{{ $index + 1 }}</span>
+                                </li>
+                            @endforeach
+                        </ol>
+                    @else
+                        <p class="text-muted mb-0">No players yet. Be the first to play!</p>
+                    @endif
                 </div>
             </div>
         </div>
