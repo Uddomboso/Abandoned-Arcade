@@ -3,15 +3,15 @@
 @section('content')
 <div class="container">
     <div class="row mb-4">
-        <div class="col-md-8">
+        <div class="col-12 col-md-8 mb-3 mb-md-0">
             @if(request('search'))
-                <h1>Search Results for "{{ request('search') }}"</h1>
+                <h1 style="font-size: clamp(1.5rem, 4vw, 2.5rem);">Search Results for "{{ request('search') }}"</h1>
                 <p class="text-muted">Found {{ $games->total() }} {{ Str::plural('game', $games->total()) }}</p>
             @else
-                <h1>All Games</h1>
+                <h1 style="font-size: clamp(1.5rem, 4vw, 2.5rem);">All Games</h1>
             @endif
         </div>
-        <div class="col-md-4">
+        <div class="col-12 col-md-4">
             <form method="GET" action="{{ route('games.index') }}" class="d-flex" id="games-search-form">
                 <input class="form-control me-2" type="search" name="search" placeholder="Search games..." value="{{ request('search') }}" id="games-search-input">
                 <button class="btn btn-outline-primary" type="submit">Search</button>
@@ -39,7 +39,7 @@
     @if($games->count() > 0)
     <div class="row">
         @foreach($games as $game)
-        <div class="col-md-3 mb-4">
+        <div class="col-6 col-md-4 col-lg-3 mb-4">
             <div class="card game-card h-100">
                 @php
                     $previewPath = null;
@@ -75,7 +75,6 @@
                 @endif
                 <div class="card-body">
                     <h5 class="card-title">{{ Str::limit($game->title, 30) }}</h5>
-                    <p class="card-text text-muted small">{{ Str::limit($game->description, 80) }}</p>
                     <div class="mb-2">
                         <span class="badge bg-primary">{{ $game->genre->name }}</span>
                         @if($game->rating > 0)

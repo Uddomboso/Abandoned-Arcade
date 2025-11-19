@@ -52,10 +52,7 @@ return [
     |
     */
 
-    'url' => (function() {
-        $url = trim((string) (env('APP_URL') ?: 'http://localhost'));
-        return filter_var($url, FILTER_VALIDATE_URL) ? rtrim($url, '/') : 'http://localhost';
-    })(),
+    'url' => env('APP_URL', 'http://localhost'),
 
     /*
     |--------------------------------------------------------------------------

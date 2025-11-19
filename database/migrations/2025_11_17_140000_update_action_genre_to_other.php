@@ -12,18 +12,28 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Delete Action genre if it exists
-        DB::table('genres')->where('slug', 'action')->delete();
+        // Check if genres table exists first
+        if (!Schema::hasTable('genres')) {
+            return;
+        }
         
-        // Ensure Other genre exists
-        if (!DB::table('genres')->where('slug', 'other')->exists()) {
-            DB::table('genres')->insert([
-                'name' => 'Other',
-                'slug' => 'other',
-                'description' => 'Other games',
-                'created_at' => now(),
-                'updated_at' => now()
-            ]);
+        try {
+            // Delete Action genre if it exists
+            DB::table('genres')->where('slug', 'action')->delete();
+            
+            // Ensure Other genre exists
+            if (!DB::table('genres')->where('slug', 'other')->exists()) {
+                DB::table('genres')->insert([
+                    'name' => 'Other',
+                    'slug' => 'other',
+                    'description' => 'Other games',
+                    'created_at' => now(),
+                    'updated_at' => now()
+                ]);
+            }
+        } catch (\Exception $e) {
+            // If migration fails, log and continue
+            \Log::warning('Migration update_action_genre_to_other failed: ' . $e->getMessage());
         }
     }
 

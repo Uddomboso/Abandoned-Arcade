@@ -23,9 +23,12 @@ class PageController extends Controller
             ->take(12)
             ->get();
 
-        // get all genres with game count
+        // get all genres with game count, excluding "others" category
         // used for genre navigation on home page
-        $genres = Genre::withCount('games')->get();
+        $genres = Genre::withCount('games')
+            ->where('slug', '!=', 'other')
+            ->where('slug', '!=', 'others')
+            ->get();
 
         return view('home', compact('latestGames', 'genres'));
     }

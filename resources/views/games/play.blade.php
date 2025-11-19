@@ -4,22 +4,22 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container-fluid">
-    <div class="row">
+<div class="container-fluid px-0 px-md-3">
+    <div class="row g-0 g-md-3">
         {{-- game player container --}}
         <div class="col-12">
             <div class="card mb-3">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h4 class="mb-0">{{ $game->title }}</h4>
+                <div class="card-header d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-2 px-2 px-md-3">
+                    <h4 class="mb-0" style="font-size: clamp(1rem, 4vw, 1.5rem);">{{ $game->title }}</h4>
                     <a href="{{ route('games.show', $game->id) }}" class="btn btn-sm btn-outline-secondary">← Back to Game</a>
                 </div>
                 <div class="card-body p-0" style="position: relative;">
                     {{-- game container with black background --}}
-                    <div id="game-container" style="width: 100%; min-height: 800px; background: #000; position: relative; overflow: hidden;">
+                    <div id="game-container" style="width: 100%; min-height: 400px; height: 60vh; max-height: 800px; background: #000; position: relative; overflow: hidden; touch-action: manipulation;">
                         {{-- flash game with ruffle player --}}
                         {{-- uses ruffle to play swf flash files in modern browsers --}}
                         @if($game->source_type === 'ruffle' || ($game->game_file_path && str_ends_with($game->game_file_path, '.swf')))
-                            <div id="ruffle-container" style="width: 100%; height: 600px;"></div>
+                            <div id="ruffle-container" style="width: 100%; height: 100%; min-height: 400px;"></div>
                             <script src="https://unpkg.com/@ruffle-rs/ruffle@latest/dist/ruffle.js"></script>
                             <script>
                                 window.RufflePlayer = window.RufflePlayer || {};
@@ -44,11 +44,11 @@
                                     id="game-iframe"
                                     src="{{ asset('games/' . $game->game_file_path) }}" 
                                     width="100%" 
-                                    height="800" 
+                                    height="100%"
                                     frameborder="0"
                                     allowfullscreen
-                                    allow="pointer-events; autoplay; fullscreen"
-                                    style="border: none; display: block; margin: 0; padding: 0; width: 100%; height: 800px;"
+                                    allow="pointer-events; autoplay; fullscreen; accelerometer; gyroscope"
+                                    style="border: none; display: block; margin: 0; padding: 0; width: 100%; height: 100%; min-height: 400px; touch-action: manipulation; -webkit-touch-callout: none; -webkit-user-select: none; user-select: none;"
                                     tabindex="0"
                                     scrolling="no">
                                 </iframe>
@@ -71,7 +71,9 @@
                                                 
                                                 if (iframeBody) {
                                                     iframeBody.style.userSelect = 'none';
-                                                    iframeBody.style.touchAction = 'none';
+                                                    iframeBody.style.touchAction = 'manipulation';
+                                                    iframeBody.style.webkitUserSelect = 'none';
+                                                    iframeBody.style.webkitTouchCallout = 'none';
                                                     console.log('Iframe body styles applied');
                                                     
                                                     {{-- Check if game script loaded --}}
@@ -162,11 +164,22 @@
                                         console.log('Iframe focused');
                                     }, 100);
                                     
-                                    {{-- focus iframe when clicked to enable keyboard input --}}
+                                    {{-- focus iframe when clicked/touched to enable keyboard input --}}
                                     {{-- don't stop propagation - let events reach iframe naturally --}}
                                     gameIframe.addEventListener('click', function() {
                                         gameIframe.focus();
                                     });
+                                    
+                                    {{-- touch events for mobile --}}
+                                    gameIframe.addEventListener('touchstart', function(e) {
+                                        gameIframe.focus();
+                                        console.log('Touch start on iframe');
+                                    }, { passive: true });
+                                    
+                                    gameIframe.addEventListener('touchend', function(e) {
+                                        gameIframe.focus();
+                                        console.log('Touch end on iframe');
+                                    }, { passive: true });
                                     
                                     {{-- test if mouse events are reaching the iframe --}}
                                     gameIframe.addEventListener('mouseenter', function() {
@@ -179,7 +192,7 @@
                                     });
                                     
                                     {{-- log for debugging --}}
-                                    console.log('Game iframe initialized, ready for mouse events');
+                                    console.log('Game iframe initialized, ready for mouse and touch events');
                                 </script>
                             @elseif($game->game_url)
                                 {{-- external game url in iframe --}}
@@ -250,7 +263,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-12 col-md-4 mt-3 mt-md-0 px-2 px-md-0">
             <div class="card mb-3">
                 <div class="card-header">
                     <h5>Quick Actions</h5>

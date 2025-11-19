@@ -44,8 +44,10 @@ class GameController extends Controller
 
         // paginate results with 12 games per page
         $games = $query->paginate(12);
-        // get all genres for filter sidebar
-        $genres = Genre::all();
+        // get all genres for filter sidebar, excluding "others" category
+        $genres = Genre::where('slug', '!=', 'other')
+            ->where('slug', '!=', 'others')
+            ->get();
 
         return view('games.index', compact('games', 'genres'));
     }

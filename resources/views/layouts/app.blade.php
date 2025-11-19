@@ -35,7 +35,7 @@
 
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     {{-- search bar with autocomplete --}}
-                    <div class="navbar-search-wrapper me-auto me-md-3" style="max-width: 300px; position: relative;">
+                    <div class="navbar-search-wrapper w-100 w-md-auto me-auto me-md-3 mb-2 mb-md-0" style="max-width: 100%; position: relative;">
                         <form method="GET" action="{{ route('games.index') }}" class="d-flex" id="navbar-search-form">
                             <input 
                                 id="navbar-search-input"

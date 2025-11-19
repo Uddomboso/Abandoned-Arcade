@@ -23,8 +23,7 @@ Write-Host ""
 # Test 2: Register a test user
 Write-Host "2. Registering test user..." -ForegroundColor Yellow
 $registerBody = @{
-    name = "Test User"
-    email = "test@example.com"
+    name = "TestUser"
     password = "password123"
     password_confirmation = "password123"
 } | ConvertTo-Json
@@ -33,7 +32,7 @@ try {
     $registerResponse = Invoke-RestMethod -Uri "$baseUrl/register" -Method Post -Body $registerBody -ContentType "application/json"
     Write-Host "   ✓ User registered successfully!" -ForegroundColor Green
     Write-Host "   User ID: $($registerResponse.user.id)" -ForegroundColor Gray
-    Write-Host "   Email: $($registerResponse.user.email)" -ForegroundColor Gray
+    Write-Host "   Username: $($registerResponse.user.name)" -ForegroundColor Gray
     $token = $registerResponse.token
     Write-Host "   Token received: $($token.Substring(0, 20))..." -ForegroundColor Gray
 } catch {
@@ -43,7 +42,7 @@ try {
         
         # Try to login instead
         $loginBody = @{
-            email = "test@example.com"
+            name = "TestUser"
             password = "password123"
         } | ConvertTo-Json
         
@@ -73,7 +72,7 @@ $headers = @{
 try {
     $userResponse = Invoke-RestMethod -Uri "$baseUrl/user" -Method Get -Headers $headers
     Write-Host "   ✓ Authentication works!" -ForegroundColor Green
-    Write-Host "   Authenticated as: $($userResponse.name) ($($userResponse.email))" -ForegroundColor Gray
+    Write-Host "   Authenticated as: $($userResponse.name)" -ForegroundColor Gray
 } catch {
     Write-Host "   ✗ Authentication failed: $($_.Exception.Message)" -ForegroundColor Red
 }

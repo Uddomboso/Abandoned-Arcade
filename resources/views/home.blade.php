@@ -10,7 +10,7 @@
         <h2 class="section-heading">browse by genre</h2>
         <div class="row g-3">
             @foreach($genres as $genre)
-            <div class="col-md-3 col-sm-6 mb-3">
+            <div class="col-6 col-md-3 mb-3">
                 <a href="{{ route('games.index', ['genre' => $genre->slug]) }}" class="text-decoration-none">
                     <div class="genre-card-neon">
                         <h5 class="genre-title">{{ $genre->name }}</h5>
@@ -29,7 +29,7 @@
         <h2 class="section-heading">latest games</h2>
         <div class="row g-4">
             @foreach($latestGames as $game)
-            <div class="col-md-3 col-sm-6">
+            <div class="col-6 col-md-4 col-lg-3 mb-4">
                 <div class="card game-card h-100">
                     @php
                         $previewPath = null;
@@ -65,7 +65,6 @@
                     @endif
                     <div class="card-body">
                         <h6 class="card-title">{{ Str::limit($game->title, 30) }}</h6>
-                        <p class="card-text small text-muted">{{ Str::limit($game->description, 60) }}</p>
                         <div class="mb-2">
                             <span class="badge bg-secondary small">{{ $game->genre->name }}</span>
                         </div>

@@ -1,13 +1,13 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
-    <div class="row">
-        <div class="col-md-8">
+<div class="container px-2 px-md-3">
+    <div class="row g-0 g-md-3">
+        <div class="col-12 col-md-8">
             <!-- Game Header -->
             <div class="card mb-4">
                 <div class="row g-0">
-                    <div class="col-md-4">
+                    <div class="col-12 col-md-4">
                         @php
                             $previewPath = null;
                             if ($game->game_file_path) {
@@ -41,27 +41,29 @@
                         </div>
                         @endif
                     </div>
-                    <div class="col-md-8">
+                    <div class="col-12 col-md-8">
                         <div class="card-body">
-                            <h1 class="card-title text-white">{{ $game->title }}</h1>
-                            <p class="card-text text-white" style="font-size: 1rem; line-height: 1.6;">{{ $game->description }}</p>
+                            <h1 class="card-title text-white" style="font-size: clamp(1.5rem, 4vw, 2.5rem);">{{ $game->title }}</h1>
+                            <p class="card-text text-white" style="font-size: clamp(0.875rem, 2vw, 1rem); line-height: 1.6;">{{ $game->description }}</p>
                             <div class="mb-3">
-                                <span class="badge bg-primary me-2">{{ $game->genre->name }}</span>
-                                <span class="badge bg-info">{{ $game->play_count }} plays</span>
+                                <span class="badge bg-primary me-2 mb-1">{{ $game->genre->name }}</span>
+                                <span class="badge bg-info mb-1">{{ $game->play_count }} plays</span>
                             </div>
                             @if($game->developer)
-                            <p class="card-text"><small class="text-white-50" style="font-size: 0.9rem;">Developer: {{ $game->developer }}</small></p>
+                            <p class="card-text"><small class="text-white-50" style="font-size: clamp(0.75rem, 2vw, 0.9rem);">Developer: {{ $game->developer }}</small></p>
                             @endif
                             @if($game->publisher)
-                            <p class="card-text"><small class="text-white-50" style="font-size: 0.9rem;">Publisher: {{ $game->publisher }}</small></p>
+                            <p class="card-text"><small class="text-white-50" style="font-size: clamp(0.75rem, 2vw, 0.9rem);">Publisher: {{ $game->publisher }}</small></p>
                             @endif
                             @if($game->release_date)
-                            <p class="card-text"><small class="text-white-50" style="font-size: 0.9rem;">Released: {{ $game->release_date->format('F Y') }}</small></p>
+                            <p class="card-text"><small class="text-white-50" style="font-size: clamp(0.75rem, 2vw, 0.9rem);">Released: {{ $game->release_date->format('F Y') }}</small></p>
                             @endif
-                            <a href="{{ route('games.play', $game->id) }}" class="btn btn-primary btn-lg mt-3">Play Game</a>
-                            @if($game->game_url && $game->source_type !== 'embedded')
-                            <a href="{{ $game->game_url }}" target="_blank" class="btn btn-outline-primary btn-lg mt-3 ms-2">Open in New Tab</a>
-                            @endif
+                            <div class="d-flex flex-column flex-sm-row gap-2 mt-3">
+                                <a href="{{ route('games.play', $game->id) }}" class="btn btn-primary btn-lg">Play Game</a>
+                                @if($game->game_url && $game->source_type !== 'embedded')
+                                <a href="{{ $game->game_url }}" target="_blank" class="btn btn-outline-primary btn-lg">Open in New Tab</a>
+                                @endif
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -79,7 +81,7 @@
         </div>
 
         <!-- Sidebar -->
-        <div class="col-md-4">
+        <div class="col-12 col-md-4 mt-4 mt-md-0">
             <!-- Related Games -->
             @if($relatedGame)
             <div class="card mb-4">

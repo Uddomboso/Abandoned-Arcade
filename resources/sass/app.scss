@@ -955,3 +955,275 @@ textarea.form-control {
         transform: translateY(10px);
     }
 }
+
+// Responsive design for mobile devices
+// Mobile-first approach with media queries
+
+// Extra small devices (phones, 320px and up)
+// Covers iPhone SE, iPhone 5, and smallest Android phones
+@media (max-width: 374.98px) {
+    // Game container - taller for better gameplay on very small screens
+    #game-container {
+        min-height: 450px !important;
+        height: 65vh !important;
+        max-height: none !important;
+    }
+    
+    #ruffle-container {
+        min-height: 450px !important;
+        height: 100% !important;
+    }
+    
+    #game-iframe {
+        min-height: 450px !important;
+        height: 100% !important;
+    }
+    
+    // Smaller text and spacing
+    .card-header {
+        padding: 0.5rem !important;
+        
+        h4, h5 {
+            font-size: 0.875rem !important;
+        }
+    }
+    
+    .card-body {
+        padding: 0.5rem !important;
+    }
+    
+    .btn-lg {
+        padding: 0.4rem 0.75rem !important;
+        font-size: 0.8rem !important;
+    }
+    
+    .section-heading {
+        font-size: 1rem !important;
+    }
+    
+    .hero-title {
+        font-size: 1.5rem !important;
+    }
+    
+    .container {
+        padding-left: 0.5rem !important;
+        padding-right: 0.5rem !important;
+    }
+    
+    // Single column layout for very small screens
+    .col-6 {
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
+    }
+    
+    // Smaller game cards
+    .game-card .card-img-top {
+        height: 120px !important;
+    }
+    
+    // Smaller badges
+    .badge {
+        font-size: 0.65rem !important;
+        padding: 0.2rem 0.4rem !important;
+    }
+}
+
+// Small devices (phones, 375px and up)
+@media (min-width: 375px) and (max-width: 575.98px) {
+    // Game container responsive height - taller for better gameplay
+    #game-container {
+        min-height: 500px !important;
+        height: 70vh !important;
+        max-height: none !important;
+    }
+    
+    // Ruffle container
+    #ruffle-container {
+        min-height: 500px !important;
+        height: 100% !important;
+    }
+    
+    // Game iframe
+    #game-iframe {
+        min-height: 500px !important;
+        height: 100% !important;
+    }
+    
+    // Card headers
+    .card-header {
+        padding: 0.75rem !important;
+        
+        h4, h5 {
+            font-size: 1rem !important;
+        }
+    }
+    
+    // Buttons
+    .btn-lg {
+        padding: 0.5rem 1rem !important;
+        font-size: 0.875rem !important;
+    }
+    
+    // Game cards
+    .game-card {
+        .card-img-top {
+            height: 150px !important;
+        }
+    }
+    
+    // Profile avatar
+    .bg-primary.rounded-circle {
+        width: 60px !important;
+        height: 60px !important;
+        font-size: 2rem !important;
+    }
+    
+    // Genre cards
+    .genre-card-neon {
+        padding: 1rem !important;
+    }
+    
+    // Section headings - smaller on phones
+    .section-heading {
+        font-size: 1.25rem !important;
+    }
+    
+    // Hero section
+    .hero-section {
+        padding: 2rem 1rem !important;
+        min-height: 200px !important;
+    }
+    
+    .hero-title {
+        font-size: 1.75rem !important;
+    }
+    
+    // Navbar search
+    .navbar-search-wrapper {
+        margin-bottom: 0.5rem !important;
+    }
+    
+    // Container padding - no padding on very small screens
+    .container {
+        padding-left: 0.5rem !important;
+        padding-right: 0.5rem !important;
+    }
+    
+    .container-fluid {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+    
+    // Card body padding
+    .card-body {
+        padding: 0.75rem !important;
+    }
+    
+    // List group items
+    .list-group-item {
+        padding: 0.5rem 0.75rem !important;
+        font-size: 0.875rem !important;
+    }
+    
+    // Badges
+    .badge {
+        font-size: 0.7rem !important;
+        padding: 0.25rem 0.5rem !important;
+    }
+}
+
+// Medium devices (tablets, 768px and up)
+@media (min-width: 576px) and (max-width: 767.98px) {
+    #game-container {
+        min-height: 350px !important;
+        height: 55vh !important;
+        max-height: 600px !important;
+    }
+    
+    #ruffle-container {
+        min-height: 350px !important;
+    }
+    
+    #game-iframe {
+        min-height: 350px !important;
+    }
+}
+
+// Touch-friendly improvements for mobile
+@media (hover: none) and (pointer: coarse) {
+    // Larger touch targets
+    .btn {
+        min-height: 44px;
+        min-width: 44px;
+    }
+    
+    .nav-link {
+        padding: 0.75rem 1rem !important;
+    }
+    
+    // Prevent text selection on buttons
+    .btn, .nav-link, .card {
+        -webkit-tap-highlight-color: rgba(0, 234, 255, 0.3);
+    }
+    
+    // Game container - ensure proper sizing on mobile
+    #game-container {
+        width: 100% !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        height: 70vh !important;
+        min-height: 500px !important;
+        max-height: none !important;
+        touch-action: manipulation !important;
+    }
+    
+    // Game iframe - better touch handling
+    #game-iframe {
+        touch-action: manipulation !important;
+        -webkit-touch-callout: none !important;
+        -webkit-user-select: none !important;
+        user-select: none !important;
+    }
+    
+    // Remove card margins on mobile for full-width game
+    .container-fluid .card {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        border-radius: 0 !important;
+        border-left: none !important;
+        border-right: none !important;
+    }
+    
+    .container-fluid .card-header {
+        border-radius: 0 !important;
+        padding: 0.75rem 1rem !important;
+    }
+    
+    // Prevent horizontal scrolling
+    body {
+        overflow-x: hidden !important;
+    }
+    
+    .container-fluid {
+        max-width: 100% !important;
+        overflow-x: hidden !important;
+    }
+}
+
+// Landscape orientation on mobile
+@media (max-width: 767.98px) and (orientation: landscape) {
+    #game-container {
+        height: 70vh !important;
+        min-height: 400px !important;
+    }
+    
+    #ruffle-container {
+        height: 70vh !important;
+        min-height: 400px !important;
+    }
+    
+    #game-iframe {
+        height: 70vh !important;
+        min-height: 400px !important;
+    }
+}

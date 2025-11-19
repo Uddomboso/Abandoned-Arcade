@@ -20,15 +20,15 @@ class AuthController extends Controller
     {
         // validate registration data
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
+            'name' => 'required|string|max:255|unique:users',
+            'email' => 'nullable|string|email|max:255',
             'password' => 'required|string|min:8|confirmed',
         ]);
 
         // create user with hashed password
         $user = User::create([
             'name' => $validated['name'],
-            'email' => $validated['email'],
+            'email' => $validated['email'] ?? null,
             'password' => Hash::make($validated['password']),
         ]);
 
@@ -48,17 +48,17 @@ class AuthController extends Controller
     {
         // validate login credentials
         $request->validate([
-            'email' => 'required|email',
+            'name' => 'required|string',
             'password' => 'required',
         ]);
 
-        // find user by email
-        $user = User::where('email', $request->email)->first();
+        // find user by username
+        $user = User::where('name', $request->name)->first();
 
         // verify password matches
         if (! $user || ! Hash::check($request->password, $user->password)) {
             throw ValidationException::withMessages([
-                'email' => ['The provided credentials are incorrect.'],
+                'name' => ['The provided credentials are incorrect.'],
             ]);
         }
 

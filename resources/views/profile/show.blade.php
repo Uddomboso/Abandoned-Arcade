@@ -10,15 +10,15 @@
 
     <div class="row">
         <!-- Profile Info -->
-        <div class="col-md-4">
+        <div class="col-12 col-md-4 mb-4 mb-md-0">
             <div class="card mb-4">
                 <div class="card-body text-center">
                     <div class="mb-3">
-                        <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 100px; height: 100px; font-size: 3rem;">
+                        <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center" style="width: clamp(80px, 15vw, 100px); height: clamp(80px, 15vw, 100px); font-size: clamp(2rem, 5vw, 3rem);">
                             {{ strtoupper(substr($user->name, 0, 1)) }}
                         </div>
                     </div>
-                    <h4>{{ $user->name }}</h4>
+                    <h4 style="font-size: clamp(1.25rem, 4vw, 1.5rem);">{{ $user->name }}</h4>
                     <p class="text-muted small">Member since {{ $user->created_at->format('F Y') }}</p>
                 </div>
             </div>
@@ -26,7 +26,7 @@
         </div>
 
         <!-- Recent Games -->
-        <div class="col-md-8">
+        <div class="col-12 col-md-8">
             @if($saveStates->count() > 0)
             <div class="card">
                 <div class="card-header">
@@ -35,7 +35,7 @@
                 <div class="card-body">
                     <div class="row">
                         @foreach($saveStates->take(6) as $saveState)
-                        <div class="col-md-4 mb-3">
+                        <div class="col-6 col-md-4 mb-3">
                             <div class="card">
                                 @if($saveState->game->image_url)
                                 <img src="{{ $saveState->game->image_url }}" class="card-img-top" alt="{{ $saveState->game->title }}" style="height: 120px; object-fit: cover;">
